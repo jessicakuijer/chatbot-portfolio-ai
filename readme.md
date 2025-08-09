@@ -15,41 +15,69 @@ Cet assistant IA me représente sur mon site web personnel et discute de ma carr
 
 ### 🤖 Intelligence Conversationnelle
 - **Conversation en français** sur ma carrière et mes compétences
-- **Tone professionnel** adapté aux recruteurs et clients potentiels
+- **Personnalité authentique** avec ma passion pour la musique et aversion pour les kiwis 🥝❌
 - **Connaissance approfondie** de mon parcours et projets récents
 - **Réponses personnalisées** basées sur mon profil LinkedIn
+- **Gestion robuste des erreurs** avec timeouts et retry automatique
 
 ### 📱 Notifications Temps Réel
 - **Capture automatique** des contacts intéressés avec leurs emails
-- **Alertes Pushover** instantanées sur mon téléphone
+- **Alertes Pushover enrichies** avec timestamps et contexte détaillé
 - **Suivi des questions** non résolues pour améliorer mon profil
-- **Historique complet** des conversations
+- **Compteurs en temps réel** des conversations et contacts
+- **Test de notifications** intégré dans l'interface
 
 ### 🛡️ Sécurité et Confidentialité
 - **Données personnelles protégées** (pas de coordonnées dans le code public)
-- **Clés API sécurisées** via Streamlit Secrets
+- **Clés API sécurisées** via Streamlit Secrets avec validation
 - **Conformité RGPD** avec consentement explicite
 - **Pas de stockage permanent** des conversations
+- **Protection contre les boucles infinies** avec limite d'itérations
 
 ## 🛠️ Technologies Utilisées
 
 - **[Streamlit](https://streamlit.io)** - Interface web interactive
 - **[OpenAI GPT-4o-mini](https://openai.com)** - Intelligence artificielle conversationnelle
 - **[Pushover](https://pushover.net)** - Notifications mobile temps réel
+- **[PyPDF](https://pypdf.readthedocs.io/)** - Traitement des documents LinkedIn
 - **Python 3.8+** - Langage de programmation
 
 ## 📱 Comment Fonctionne Pushover
 
 ### Notifications Automatiques
 L'assistant m'envoie des notifications instantanées quand :
-- 📧 **Contact capturé** : "Jessica, Marc Dupont veut vous contacter : marc@entreprise.com"
-- ❓ **Question non résolue** : "Quelqu'un demande vos compétences en Kubernetes - à ajouter ?"
+- 📧 **Contact capturé** : "📧 NOUVEAU CONTACT pour Jessica ! 👤 Marc Dupont 📧 marc@entreprise.com"
+- ❓ **Question non résolue** : "❓ QUESTION NON RÉSOLUE ! Quelqu'un demande vos compétences en Kubernetes"
 
 ### Configuration Simple
 1. **Compte gratuit** sur [pushover.net](https://pushover.net)
 2. **App mobile** installée (iOS/Android)
 3. **Clés API** configurées dans l'assistant
 4. **7,500 notifications/mois** gratuites
+5. **Test intégré** pour vérifier le fonctionnement
+
+## 🔧 Installation
+
+### 1. Prérequis
+```bash
+git clone https://github.com/votre-username/jessica-ai-assistant
+cd jessica-ai-assistant
+pip install -r requirements.txt
+```
+
+### 2. Configuration des Secrets
+Créez `.streamlit/secrets.toml` :
+```toml
+OPENAI_API_KEY = "sk-votre-cle-openai"
+PUSHOVER_USER = "votre-user-key-pushover"
+PUSHOVER_TOKEN = "votre-token-app-pushover"
+CONTACT_EMAIL = "votre-email@domaine.com"
+```
+
+### 3. Lancement
+```bash
+streamlit run app.py
+```
 
 ## 💬 Exemples d'Utilisation
 
@@ -95,9 +123,10 @@ L'assistant suit automatiquement :
 - ✅ **Clés API** stockées de manière sécurisée
 - ✅ **Pas de stockage permanent** des conversations
 - ✅ **Consentement explicite** pour la capture d'emails
+- ✅ **Gestion d'erreurs robuste** avec timeouts
 
 ### Bonnes Pratiques
-- Secrets jamais commitées dans Git
+- Secrets jamais committées dans Git
 - Notifications chiffrées via HTTPS
 - Respect des quotas API Pushover
 - Rate limiting pour éviter les abus
@@ -105,8 +134,7 @@ L'assistant suit automatiquement :
 ## 🚀 Évolutions Futures
 
 ### Version 2.0 - Intégrations Avancées
-- [ ] **Google Calendar** - Planification automatique de rendez-vous
-- [ ] **Email automatique** - Envoi de portfolios ciblés  
+- [ ] **Google Calendar** - Planification automatique de rendez-vous 
 - [ ] **Analytics dashboard** - Statistiques détaillées des conversations
 - [ ] **CRM simple** - Stockage et suivi des contacts
 
@@ -117,6 +145,6 @@ L'assistant suit automatiquement :
 
 ---
 
-💡 **Envie de tester ?** Rendez-vous sur l'assistant : [**Discuter avec Jessica IA**](https://votre-app.streamlit.app)
+💡 **Envie de tester ?** Rendez-vous sur l'assistant : [**Discuter avec Jessica IA**](https://chatbot-jessicakuijer-ai.streamlit.app/)
 
 ⭐ **Ce projet vous inspire ?** N'hésitez pas à lui donner une étoile sur GitHub !
