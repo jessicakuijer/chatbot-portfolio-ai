@@ -110,7 +110,7 @@ Développeuse web backend PHP PYTHON
 Seine-et-Marne, Île-de-France, France
 
 Résumé
-Développeuse Backend PHP / PYTHON passionnée — J'apporte des solutions techniques robustes tout en accompagnant les projets web de leur conception à leur déploiement.
+Développeuse Backend PHP / PYTHON passionnée — J'apporte des solutions techniques robustes tout en accompagnant les projets web de leur conception à leur déploiement. Actuellement en recherche d'un nouveau challenge, je suis à la recherche d'un poste de développeuse backend PHP / PYTHON et je suis disponible dès que possible. Je suis en cours de formation sur l'enrichissement de mes compétences en Agentic AI.
 Autodidacte, sociable, dynamique et faisant preuve de leadership, je parle anglais et français.
 Je suis également mélomane et j'aime partager cette passion.
 
@@ -125,6 +125,13 @@ Principales compétences
 Languages
 Anglais, Français
 
+Diplômes
+• Titre professionnel RNCP niveau 5 Développeur web et web mobile (2020)
+
+Formations récentes et en cours
+• Formation Agentic AI - Udemy (2025)
+• Formation Scrum developper - SIA (2024)
+
 Certifications
 • Finisher Fresque du Climat Sia Partners
 • Certificat Contribution Climat
@@ -135,23 +142,38 @@ Certifications
 Expérience Professionnelle
 
 Sia Experience - Développeuse web backend
-mai 2023 - Present (2 ans 3 mois) | Paris, Île-de-France, France
+mai 2023 - aout 2025 (2 ans 3 mois) | Paris, Île-de-France, France
 Consultante pour solutions de création d'interfaces web, TMA, backend (PHP, Python) au sein de SIA, BU Sia Experience.
-
-ZOL - Développeuse web
-octobre 2022 - décembre 2022 (3 mois) | Lyon et périphérie
+Développement backend d'endpoints et fonctionnalités selon cycle en V
+Système d'authentification JWT et implémentation SSO avec gestion des rôles
+Intégration websockets (Swoole) pour interactions temps réel entre utilisateurs
+Système de matching géographique avec calculs de distances (ST_Distance_Sphere)
+API REST avec requêtes récursives et technologie IA custom (CooPhronie)
+Interface d'administration avec pré-calculs statistiques
+Technologies : Symfony7, Python/Flask, PHP, MySQL/PostgreSQL, React, Docker, WebSockets
+Environnement : Redmine, GitLab, infrastructure microservices
 
 Carvivo - Développeuse web
 mai 2022 - septembre 2022 (5 mois) | Paris, Île-de-France, France
 TMA et ajout de nouvelles fonctionnalités sur l'outil de gestion des leads (Symfony, PHP, JS).
-
-Freelance - Développeur web
-janvier 2021 - septembre 2022 (1 an 9 mois) | France
-Statut micro-entrepreneur
+Optimisation d'un outil de gestion de leads: correction de bugs et développement de nouvelles
+fonctionnalités
+Responsable des déploiements hebdomadaires via Github Actions et tests fonctionnels (Selenium)
+Implémentation multilingue (FR/EN) et intégration front-end responsive
+Collaboration en méthode agile avec points quotidiens et sprints bi-mensuels
+Technologies : Symfony2.8, PHP, JS, jQuery, HTML/CSS (Twig)
+Environnement : Jira, Github
 
 MINDOZA - Développeur web
-janvier 2022 - mai 2022 (5 mois) | Paris, Île-de-France, France
+Mai 2021 - Mai 2022 (1 an) | Paris, Île-de-France, France
 Développement web multi-projets PHP, JavaScript avec Symfony, VueJs, React, BackboneJs et WordPress.
+Développement backend des endpoints et nouvelles fonctionnalités
+Développement d'APIs REST et back-offices personnalisés selon méthodologie cycle en V
+Maintenance évolutives sur des projets utilisant diverses technologies (WordPress, Symfony, VueJS,
+CSML, BackboneJS)
+Implémentation d'environnements conteneurisés Docker pour projets Symfony
+Clients: Healthubby Alstom, Carl’s Jr, chatbots pour concours internes Eurosport pendant les JO de
+Tokyo et Beijing, templates email groupe Casino
 
 Feedback Lawyers - Développeuse WEB
 juillet 2020 - septembre 2020 (3 mois) | Paris, Île-de-France, France
@@ -162,6 +184,7 @@ Formation
 • WebForce3 - Titre professionnel RNCP niveau 5 Développeur web et web mobile (2020)
 
 Projets Récents
+• Chatbot Jessica IA - Assistant IA personnel avec notifications Pushover
 • Music Discovery AI - Application de découverte musicale avec IA
 • Préparateur aux entretiens - Outil de simulation d'entretiens avec IA
 • Solutions web diverses en PHP/Symfony et Python"""
