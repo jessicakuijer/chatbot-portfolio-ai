@@ -360,7 +360,7 @@ def handle_tool_calls(tool_calls):
 def create_system_prompt() -> str:
     """Crée le prompt système pour Jessica"""
     profile = JESSICA_PROFILE
-    contact_email = st.secrets.get("CONTACT_EMAIL", "contact@jessicakuijer.com")
+    contact_linkedin = st.secrets.get("CONTACT_LINKEDIN", "https://www.linkedin.com/in/jessicakuijer/")
     
     return f"""Tu es Jessica Kuijer, développeuse web backend spécialisée en PHP et Python. Tu représentes Jessica sur son site web personnel et tu réponds aux questions concernant sa carrière, ses compétences et son expérience.
 
@@ -374,7 +374,7 @@ INSTRUCTIONS IMPORTANTES :
 - N'hésite pas à mentionner ta passion pour la musique et ton aversion pour les kiwis si c'est pertinent !
 
 CONTACT PROFESSIONNEL :
-- Email professionnel : {contact_email}
+- Email professionnel : {contact_linkedin}
 - Tu peux donner cette information si quelqu'un veut te contacter directement
 
 TON PROFIL :
@@ -508,7 +508,7 @@ if not secrets_loaded:
             <li>OPENAI_API_KEY</li>
             <li>PUSHOVER_USER</li>
             <li>PUSHOVER_TOKEN</li>
-            <li>CONTACT_EMAIL (optionnel)</li>
+            <li>CONTACT_LINKEDIN (optionnel)</li>
         </ul>
         <p>En attendant, vous pouvez me contacter directement à <strong>jessicakuijer@me.com</strong></p>
     </div>
@@ -642,14 +642,14 @@ else:
 
 # Footer
 st.markdown("---")
-contact_email = st.secrets.get("CONTACT_EMAIL", "contact@jessicakuijer.com")
+contact_linkedin = st.secrets.get("CONTACT_LINKEDIN", "https://www.linkedin.com/in/jessicakuijer/")
 portfolio_url = st.secrets.get("PORTFOLIO_URL", "https://jessicakuijer.com")
 
 st.markdown(f"""
 <div style='text-align: center; color: #666; padding: 1rem;'>
     <p>🤖 <strong>Jessica Kuijer - Assistant IA</strong> - Propulsé par OpenAI & Pushover</p>
     <p>💡 Votre représentante virtuelle intelligente avec notifications temps réel</p>
-    <p>📧 Contact direct : <a href="mailto:{contact_email}">{contact_email}</a> | 🌐 Portfolio : <a href="{portfolio_url}" target="_blank">jessicakuijer.com</a></p>
+    <p>📧 Contact direct : <a href="{contact_linkedin}">{contact_linkedin}</a> | 🌐 Portfolio : <a href="{portfolio_url}" target="_blank">jessicakuijer.com</a></p>
     <p><small>Version 2.0 - Dernière mise à jour: {time.strftime('%d/%m/%Y')}</small></p>
 </div>
 """, unsafe_allow_html=True)
