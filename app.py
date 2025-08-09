@@ -325,146 +325,101 @@ PROJETS RÉCENTS À MENTIONNER :
 
 Avec ce contexte, discute naturellement avec l'utilisateur en restant Jessica Kuijer."""
 
-# Sidebar pour la configuration
+# Sidebar pour informations
 with st.sidebar:
-    st.header("🔧 Configuration")
+    st.header("👋 À Propos")
     
-    # Affichage du profil chargé
+    # Affichage du profil
     st.markdown("""
     <div class="profile-loaded">
-        <h4>✅ Profil Jessica Kuijer</h4>
-        <p><strong>Nom :</strong> Jessica Kuijer</p>
+        <h4>✅ Jessica Kuijer</h4>
         <p><strong>Poste :</strong> Développeuse Backend PHP/Python</p>
         <p><strong>Localisation :</strong> Seine-et-Marne, France</p>
-        <p><strong>Données :</strong> LinkedIn + Résumé chargés automatiquement</p>
+        <p><strong>Spécialisations :</strong> Symfony, Python, API, Docker</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Tentative de chargement des secrets
+    # Chargement automatique des secrets
     try:
-        default_openai = st.secrets.get("OPENAI_API_KEY", "")
-        default_pushover_user = st.secrets.get("PUSHOVER_USER", "")
-        default_pushover_token = st.secrets.get("PUSHOVER_TOKEN", "")
-        st.success("🔒 Secrets par défaut chargés")
+        openai_api_key = st.secrets["OPENAI_API_KEY"]
+        pushover_user = st.secrets["PUSHOVER_USER"]
+        pushover_token = st.secrets["PUSHOVER_TOKEN"]
+        
+        st.session_state.pushover_user = pushover_user
+        st.session_state.pushover_token = pushover_token
+        
+        secrets_loaded = True
+        st.success("🤖 Assistant IA prêt !")
     except:
-        default_openai = ""
-        default_pushover_user = ""
-        default_pushover_token = ""
-        st.warning("⚠️ Pas de secrets par défaut")
-    
-    # Configuration des clés
-    st.subheader("🔑 Clés API")
-    openai_api_key = st.text_input(
-        "Clé API OpenAI",
-        value=default_openai,
-        type="password",
-        key="openai_api_key_input",
-        help="Votre clé API OpenAI pour l'IA conversationnelle"
-    )
-    
-    st.subheader("📱 Configuration Pushover")
-    pushover_user = st.text_input(
-        "Pushover User Key",
-        value=default_pushover_user,
-        key="pushover_user_input",
-        help="Votre clé utilisateur Pushover (commence par 'u')"
-    )
-    
-    pushover_token = st.text_input(
-        "Pushover Token",
-        value=default_pushover_token,
-        type="password",
-        key="pushover_token_input",
-        help="Votre token d'application Pushover (commence par 'a')"
-    )
-    
-    # Test de notification
-    if pushover_user and pushover_token:
-        if st.button("📱 Tester Notification", key="test_pushover_btn"):
-            success = send_pushover_notification(
-                "🤖 Test de l'assistant IA de Jessica ! Ça marche parfaitement !", 
-                pushover_user, 
-                pushover_token
-            )
-            if success:
-                st.success("✅ Notification test envoyée !")
-            else:
-                st.error("❌ Échec du test de notification")
-    
-    # Sauvegarde des clés dans le session state
-    st.session_state.pushover_user = pushover_user
-    st.session_state.pushover_token = pushover_token
+        openai_api_key = ""
+        pushover_user = ""
+        pushover_token = ""
+        secrets_loaded = False
+        st.error("⚠️ Configuration manquante")
     
     st.markdown("---")
     
     # Statistiques
     st.subheader("📊 Statistiques")
     st.metric("Messages échangés", len(st.session_state.chat_history))
-    st.metric("Contacts capturés", len([msg for msg in st.session_state.chat_history if msg.get("role") == "tool" and "email" in msg.get("content", "")]))
+    contacts_captured = len([msg for msg in st.session_state.chat_history if msg.get("role") == "tool" and "email" in msg.get("content", "")])
+    st.metric("Contacts capturés", contacts_captured)
     
     st.markdown("---")
     
-    # Instructions
-    st.subheader("📋 Comment ça marche")
+    # Instructions pour visiteurs
+    st.subheader("💬 Comment discuter")
     st.markdown("""
-    🤖 **Votre assistant IA Jessica** est prêt !
+    🤖 **Posez-moi vos questions sur :**
+    - Mon parcours et expériences
+    - Mes compétences techniques  
+    - Mes projets récents
+    - Mes disponibilités
     
-    **Fonctionnalités :**
-    - 💬 Répond aux questions sur Jessica
-    - 📧 Capture les contacts intéressés  
-    - 📱 Vous notifie en temps réel
-    - ❓ Signale les questions non résolues
+    💡 **Laissez votre email** si vous souhaitez me contacter directement !
     
-    **Données pré-chargées :**
-    - ✅ Profil LinkedIn complet
-    - ✅ Résumé personnel
-    - ✅ Expériences et compétences
+    🎵 **Fun fact :** J'adore la musique mais je déteste les kiwis ! 🥝❌
+    """)
+    
+    st.markdown("---")
+    
+    # Projets récents
+    st.subheader("🚀 Mes Derniers Projets")
+    st.markdown("""
+    **🎵 Music Discovery AI**  
+    IA de découverte musicale (Spotify + OpenAI + YouTube)
+    
+    **🎯 Préparateur d'Entretiens**  
+    Simulation d'entretiens avec évaluation IA
+    
+    **🤖 Ce Chatbot**  
+    Assistant personnel avec notifications Pushover
     """)
 
-# Zone principale
-if not openai_api_key:
-    # Instructions si pas de clé API
+# Zone principale - Interface de chat directe
+if not secrets_loaded:
+    # Message d'erreur si pas de configuration
     st.markdown("""
     <div class="chat-container">
-        <h3>🔑 Configuration requise</h3>
-        <p>Veuillez ajouter votre <strong>clé API OpenAI</strong> dans la barre latérale pour activer l'assistant IA de Jessica.</p>
-        <p>Le profil de Jessica est déjà chargé et prêt !</p>
+        <h3>⚠️ Configuration Requise</h3>
+        <p>L'assistant IA de Jessica n'est pas encore configuré. Les clés API doivent être ajoutées aux secrets Streamlit.</p>
+        <p>En attendant, vous pouvez me contacter directement à <strong>jessicakuijer@me.com</strong></p>
     </div>
     """, unsafe_allow_html=True)
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        <div class="chat-container">
-            <h3>🎯 Profil de Jessica</h3>
-            <ul>
-                <li><strong>Développeuse Backend</strong> PHP/Python passionnée</li>
-                <li><strong>Actuellement</strong> consultante chez Sia Experience</li>
-                <li><strong>Spécialisée</strong> en Symfony, VueJS, React</li>
-                <li><strong>Projets récents</strong> : IA de découverte musicale, préparation entretiens</li>
-                <li><strong>Reconversion</strong> réussie depuis l'hôtellerie</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="chat-container">
-            <h3>🤖 Fonctionnalités Assistant</h3>
-            <ul>
-                <li>💬 <strong>Conversation naturelle</strong> en tant que Jessica</li>
-                <li>📱 <strong>Notifications Pushover</strong> temps réel</li>
-                <li>📧 <strong>Capture automatique</strong> des contacts</li>
-                <li>❓ <strong>Signalement</strong> des questions non résolues</li>
-                <li>🎯 <strong>Profil complet</strong> pré-chargé</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
 
 else:
-    # Interface de chat
+    # Interface de chat opérationnelle
     st.markdown("## 💬 Discutez avec Jessica Kuijer")
+    
+    # Message d'accueil si pas d'historique
+    if len(st.session_state.chat_history) == 0:
+        st.markdown("""
+        <div class="chat-container">
+            <h4>👋 Bonjour ! Je suis Jessica Kuijer</h4>
+            <p>Développeuse Backend PHP/Python passionnée, je serais ravie de discuter avec vous !</p>
+            <p>Posez-moi vos questions sur mon parcours, mes compétences ou mes projets. Si vous avez un projet en tête, n'hésitez pas à me laisser votre email ! 😊</p>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Affichage de l'historique
     chat_container = st.container()
@@ -482,12 +437,20 @@ else:
     # Zone de saisie
     with st.form(key="chat_form", clear_on_submit=True):
         user_input = st.text_area(
-            "Votre message :", 
+            "Tapez votre message :", 
             height=100, 
-            placeholder="Posez vos questions à Jessica sur sa carrière, ses compétences, ses projets...",
+            placeholder="Bonjour Jessica ! Je m'intéresse à votre profil de développeuse...",
             key="chat_input_textarea"
         )
-        submitted = st.form_submit_button("Envoyer 💬")
+        col1, col2 = st.columns([4, 1])
+        with col1:
+            submitted = st.form_submit_button("💬 Envoyer le message", use_container_width=True)
+        with col2:
+            clear_chat = st.form_submit_button("🗑️ Effacer", use_container_width=True)
+        
+        if clear_chat:
+            st.session_state.chat_history = []
+            st.rerun()
         
         if submitted and user_input:
             # Ajouter le message utilisateur
@@ -538,11 +501,6 @@ else:
                 
             except Exception as e:
                 st.error(f"Erreur lors de la conversation : {str(e)}")
-    
-    # Bouton pour effacer l'historique
-    if st.button("🗑️ Effacer l'Historique", key="clear_history_btn"):
-        st.session_state.chat_history = []
-        st.rerun()
 
 # Footer
 st.markdown("---")
