@@ -358,6 +358,7 @@ with st.sidebar:
         "Clé API OpenAI",
         value=default_openai,
         type="password",
+        key="openai_api_key_input",
         help="Votre clé API OpenAI pour l'IA conversationnelle"
     )
     
@@ -365,6 +366,7 @@ with st.sidebar:
     pushover_user = st.text_input(
         "Pushover User Key",
         value=default_pushover_user,
+        key="pushover_user_input",
         help="Votre clé utilisateur Pushover (commence par 'u')"
     )
     
@@ -372,12 +374,13 @@ with st.sidebar:
         "Pushover Token",
         value=default_pushover_token,
         type="password",
+        key="pushover_token_input",
         help="Votre token d'application Pushover (commence par 'a')"
     )
     
     # Test de notification
     if pushover_user and pushover_token:
-        if st.button("📱 Tester Notification"):
+        if st.button("📱 Tester Notification", key="test_pushover_btn"):
             success = send_pushover_notification(
                 "🤖 Test de l'assistant IA de Jessica ! Ça marche parfaitement !", 
                 pushover_user, 
@@ -478,7 +481,12 @@ else:
     
     # Zone de saisie
     with st.form(key="chat_form", clear_on_submit=True):
-        user_input = st.text_area("Votre message :", height=100, placeholder="Posez vos questions à Jessica sur sa carrière, ses compétences, ses projets...")
+        user_input = st.text_area(
+            "Votre message :", 
+            height=100, 
+            placeholder="Posez vos questions à Jessica sur sa carrière, ses compétences, ses projets...",
+            key="chat_input_textarea"
+        )
         submitted = st.form_submit_button("Envoyer 💬")
         
         if submitted and user_input:
@@ -532,7 +540,7 @@ else:
                 st.error(f"Erreur lors de la conversation : {str(e)}")
     
     # Bouton pour effacer l'historique
-    if st.button("🗑️ Effacer l'Historique"):
+    if st.button("🗑️ Effacer l'Historique", key="clear_history_btn"):
         st.session_state.chat_history = []
         st.rerun()
 
