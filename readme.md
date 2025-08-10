@@ -84,7 +84,18 @@ PUSHOVER_TOKEN = "votre-token-app-pushover"
 CONTACT_EMAIL = "votre-email@domaine.com"
 ```
 
-### 3. Lancement
+### 3. Configuration du Thème (Optionnel)
+Le fichier `.streamlit/config.toml` est automatiquement créé pour forcer le thème clair. Si vous voulez personnaliser :
+
+```toml
+[theme]
+base = "light"  # Forcer le thème clair
+primaryColor = "#667eea"  # Couleur principale
+backgroundColor = "#ffffff"  # Fond blanc
+textColor = "#000000"  # Texte noir
+```
+
+### 4. Lancement
 ```bash
 streamlit run app.py
 ```
@@ -97,6 +108,15 @@ L'assistant détecte automatiquement quand l'utilisateur demande à Jessica de p
 **Mots-clés déclencheurs :**
 - 🇫🇷 **Français** : "parle français", "speak french", "change de langue"
 - 🇬🇧 **Anglais** : "parle anglais", "speak english", "switch to english"
+
+## 🎨 Interface et Thème
+
+### Thème Clair Forcé
+- **Mode clair par défaut** pour une lisibilité optimale sur tous les appareils
+- **CSS personnalisé** avec couleurs forcées pour éviter les problèmes de contraste
+- **Configuration Streamlit** via `.streamlit/config.toml` pour maintenir le thème
+- **Amélioration de l'accessibilité** avec des couleurs de texte contrastées
+- **Compatibilité multi-appareils** (mobile, tablette, desktop)
 
 ### Traduction Dynamique du Profil
 - **Profil complet traduit** en temps réel via OpenAI

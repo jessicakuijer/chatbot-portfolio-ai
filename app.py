@@ -12,12 +12,63 @@ st.set_page_config(
     page_title="🤖 Jessica Kuijer - Assistant IA",
     page_icon="🤖",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://github.com/jessicakuijer/chatbot-portfolio',
+        'Report a bug': "https://github.com/jessicakuijer/chatbot-portfolio/issues",
+        'About': "# 🤖 Jessica Kuijer - Assistant IA\n\nAssistant IA personnel avec notifications temps réel"
+    }
 )
+
+# Forcer le thème clair pour une meilleure lisibilité
+st.markdown("""
+<style>
+    /* Forcer le thème clair */
+    .stApp {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    
+    /* S'assurer que le texte est lisible */
+    .stMarkdown, .stText, .stTextInput, .stTextArea {
+        color: #000000 !important;
+    }
+    
+    /* Forcer les couleurs de fond des messages */
+    .message-user {
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        color: white !important;
+    }
+    
+    .message-assistant {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #e0e0e0 !important;
+    }
+    
+    /* Améliorer la lisibilité des éléments Streamlit */
+    .stButton > button {
+        color: #000000 !important;
+        background-color: #f0f2f6 !important;
+        border: 1px solid #d0d0d0 !important;
+    }
+    
+    .stButton > button:hover {
+        background-color: #e0e2e6 !important;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # CSS personnalisé unique
 st.markdown("""
 <style>
+    /* Forcer le thème clair global */
+    .stApp {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    
+    /* En-tête principal */
     .main-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         padding: 2rem;
@@ -28,6 +79,7 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
     
+    /* Conteneur de chat */
     .chat-container {
         background: #f8f9ff;
         padding: 1.5rem;
@@ -35,16 +87,20 @@ st.markdown("""
         margin: 1rem 0;
         border-left: 4px solid #667eea;
         box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        color: #000000;
     }
     
+    /* Cartes de notification */
     .notification-card {
         background: #e8f5e8;
         padding: 1rem;
         border-radius: 10px;
         border-left: 4px solid #28a745;
         margin: 1rem 0;
+        color: #155724;
     }
     
+    /* Messages utilisateur */
     .message-user {
         background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
@@ -55,6 +111,7 @@ st.markdown("""
         box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     }
     
+    /* Messages assistant */
     .message-assistant {
         background: #ffffff;
         padding: 1rem;
@@ -63,8 +120,11 @@ st.markdown("""
         margin-right: 20%;
         border-left: 3px solid #667eea;
         box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        color: #000000;
+        border: 1px solid #e0e0e0;
     }
     
+    /* Messages d'outils */
     .message-tool {
         background: #fff3cd;
         padding: 0.5rem;
@@ -73,30 +133,67 @@ st.markdown("""
         border-left: 3px solid #ffc107;
         font-size: 0.9rem;
         font-style: italic;
+        color: #856404;
     }
     
+    /* Profil chargé */
     .profile-loaded {
         background: #d4edda;
         padding: 1rem;
         border-radius: 10px;
         border-left: 4px solid #28a745;
         margin: 1rem 0;
+        color: #155724;
     }
     
+    /* Boîtes d'erreur */
     .error-box {
         background: #f8d7da;
         padding: 1rem;
         border-radius: 10px;
         border-left: 4px solid #dc3545;
         margin: 1rem 0;
+        color: #721c24;
     }
     
+    /* Boîtes de succès */
     .success-box {
         background: #d1ecf1;
         padding: 1rem;
         border-radius: 10px;
         border-left: 4px solid #17a2b8;
         margin: 1rem 0;
+        color: #0c5460;
+    }
+    
+    /* Améliorer la lisibilité des éléments Streamlit */
+    .stMarkdown, .stText, .stTextInput, .stTextArea {
+        color: #000000 !important;
+    }
+    
+    .stButton > button {
+        color: #000000 !important;
+        background-color: #f0f2f6 !important;
+        border: 1px solid #d0d0d0 !important;
+    }
+    
+    .stButton > button:hover {
+        background-color: #e0e2e6 !important;
+    }
+    
+    /* Forcer les couleurs de fond */
+    .stApp > div:first-child {
+        background-color: #ffffff !important;
+    }
+    
+    /* Améliorer la sidebar */
+    .css-1d391kg {
+        background-color: #f8f9fa !important;
+    }
+    
+    /* Forcer les couleurs de texte */
+    .stMarkdown p, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
+        color: #000000 !important;
     }
 </style>
 """, unsafe_allow_html=True)

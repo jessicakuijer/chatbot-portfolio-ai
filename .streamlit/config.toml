@@ -1,0 +1,19 @@
+[theme]
+# Forcer le thème clair pour une meilleure lisibilité
+base = "light"
+primaryColor = "#667eea"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f8f9ff"
+textColor = "#000000"
+font = "sans serif"
+
+[server]
+# Configuration du serveur
+headless = true
+port = 8501
+enableCORS = false
+enableXsrfProtection = false
+
+[browser]
+# Configuration du navigateur
+gatherUsageStats = false 
