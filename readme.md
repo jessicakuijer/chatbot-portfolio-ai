@@ -23,7 +23,7 @@ Cet assistant IA me représente sur mon site web personnel et discute de ma carr
 - **Gestion robuste des erreurs** avec timeouts et retry automatique
 
 ### 📱 Notifications Temps Réel
-- **Capture automatique** des contacts intéressés avec leurs emails
+- **Capture automatique** des contacts intéressés avec leurs emails et téléphones
 - **Alertes Pushover enrichies** avec timestamps et contexte détaillé
 - **Suivi des questions** non résolues pour améliorer mon profil
 - **Compteurs en temps réel** des conversations et contacts
@@ -48,8 +48,16 @@ Cet assistant IA me représente sur mon site web personnel et discute de ma carr
 
 ### Notifications Automatiques
 L'assistant m'envoie des notifications instantanées quand :
-- 📧 **Contact capturé** : "📧 NOUVEAU CONTACT pour Jessica ! 👤 Marc Dupont 📧 marc@entreprise.com"
+- 📧 **Contact capturé** : "📧 NOUVEAU CONTACT pour Jessica ! 👤 Marc Dupont 📧 marc@entreprise.com 📱 06 12 34 56 78"
 - ❓ **Question non résolue** : "❓ QUESTION NON RÉSOLUE ! Quelqu'un demande vos compétences en Kubernetes"
+
+### Informations Capturées
+L'assistant capture automatiquement :
+- **👤 Nom** de l'utilisateur (si fourni)
+- **📧 Email** (obligatoire pour le contact)
+- **📱 Téléphone** (optionnel, pour rappel direct)
+- **📝 Notes** sur le projet ou la demande
+- **⏰ Timestamp** de la prise de contact
 
 ### Configuration Simple
 1. **Compte gratuit** sur [pushover.net](https://pushover.net)
@@ -117,9 +125,9 @@ L'assistant détecte automatiquement quand l'utilisateur demande à Jessica de p
 
 ### Capture de Contact  
 **Visiteur :** "Pouvez-vous me développer une application web ?"  
-**Assistant :** "Je serais ravie de discuter de votre projet ! Pouvez-vous me donner votre email pour que nous puissions échanger plus en détail ?"
+**Assistant :** "Je serais ravie de discuter de votre projet ! Pouvez-vous me donner votre email et votre téléphone pour que nous puissions échanger plus en détail ?"
 
-**→ Notification immédiate** sur mon téléphone avec les détails du contact.
+**→ Notification immédiate** sur mon téléphone avec les détails du contact (email + téléphone).
 
 ## 🎯 Cas d'Usage Professionnels
 

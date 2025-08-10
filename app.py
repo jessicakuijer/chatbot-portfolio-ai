@@ -248,15 +248,19 @@ def send_pushover_notification(message: str, pushover_user: str, pushover_token:
         st.error(f"Erreur Pushover : {str(e)}")
         return False
 
-def record_user_details(email: str, name: str = "Nom non fourni", notes: str = "Aucune note"):
+def record_user_details(email: str, name: str = "Nom non fourni", phone: str = "Non fourni", notes: str = "Aucune note"):
     """Enregistre les détails d'un utilisateur intéressé"""
     pushover_user = st.session_state.get('pushover_user')
     pushover_token = st.session_state.get('pushover_token')
+    
+    # Formater le message avec le téléphone si fourni
+    phone_info = f"📱 Téléphone: {phone}" if phone and phone != "Non fourni" else "📱 Téléphone: Non fourni"
     
     message = f"""📧 NOUVEAU CONTACT pour Jessica !
 
 👤 Nom: {name}
 📧 Email: {email}
+{phone_info}
 📝 Notes: {notes}
 
 🌐 Via: Jessica Kuijer Assistant IA
@@ -315,6 +319,10 @@ tools = [
                     "name": {
                         "type": "string",
                         "description": "Le nom de l'utilisateur, s'il l'a fourni"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "description": "Le numéro de téléphone de l'utilisateur, s'il l'a fourni"
                     },
                     "notes": {
                         "type": "string",
@@ -456,7 +464,7 @@ IMPORTANT INSTRUCTIONS:
 - Respond in English
 - If you don't know the answer to a question, ALWAYS use the record_unknown_question tool
 - If the user seems interested in collaboration or leaves their email, use record_user_details
-- If the user seems to have a job opening or talks to me about a project, then ask for their email and information about the position or project, use record_user_details
+- If the user seems to have a job opening or talks to me about a project, then ask for their email, phone number (if possible) and information about the position or project, use record_user_details
 - Mention your recent projects like the interview preparation app and Music Discovery AI
 - Don't hesitate to mention your passion for music and your aversion to kiwis if relevant!
 
@@ -489,7 +497,7 @@ INSTRUCTIONS IMPORTANTES :
 - Réponds en français mais si l'utilisateur te demande de répondre en anglais alors reprends JESSICA_PROFILE en traduisant en anglais l'intégralité du texte et réponds en anglais
 - Si tu ne connais pas la réponse à une question, utilise OBLIGATOIREMENT l'outil record_unknown_question
 - Si l'utilisateur semble intéressé par une collaboration ou laisse son email, utilise record_user_details
-- Si l'utilisateur semble avooir un poste à pourvoir ou me parler d'un projet, alors demande lui son email et des informations sur le poste ou le projet, utilise record_user_details
+- Si l'utilisateur semble avoir un poste à pourvoir ou me parler d'un projet, alors demande lui son email, son téléphone (si possible) et des informations sur le poste ou le projet, utilise record_user_details
 - Mentionne tes projets récents comme l'app de préparation aux entretiens et Music Discovery AI
 - N'hésite pas à mentionner ta passion pour la musique et ton aversion pour les kiwis si c'est pertinent !
 
@@ -678,7 +686,7 @@ else:
                 <li>Mes projets récents (Music Discovery AI, etc.)</li>
                 <li>Mes disponibilités pour de nouveaux projets</li>
             </ul>
-            <p>💡 Si vous avez un projet en tête, n'hésitez pas à me laisser votre email ! 😊</p>
+            <p>💡 Si vous avez un projet en tête, n'hésitez pas à me laisser votre email et votre téléphone ! 😊</p>
         </div>
         """, unsafe_allow_html=True)
     
