@@ -215,6 +215,8 @@ if 'notification_count' not in st.session_state:
     st.session_state.notification_count = 0
 if 'contact_count' not in st.session_state:
     st.session_state.contact_count = 0
+if 'current_language' not in st.session_state:
+    st.session_state.current_language = "french"
 
 def send_pushover_notification(message: str, pushover_user: str, pushover_token: str):
     """Envoie une notification Pushover avec gestion d'erreurs améliorée"""
@@ -375,12 +377,111 @@ def handle_tool_calls(tool_calls):
     
     return results
 
-def create_system_prompt() -> str:
-    """Crée le prompt système pour Jessica"""
+def translate_profile_to_english(profile: dict, openai_client) -> dict:
+    """Traduit le profil Jessica en anglais en utilisant l'API OpenAI"""
+    try:
+        # Préparer le texte à traduire
+        text_to_translate = f"""
+Nom: {profile['name']}
+Résumé: {profile['summary']}
+
+Profil LinkedIn:
+{profile['linkedin_text']}
+        """.strip()
+        
+        # Demander la traduction à OpenAI
+        response = openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system", 
+                    "content": "Tu es un traducteur professionnel français-anglais. Traduis le profil de Jessica Kuijer en anglais en gardant le style professionnel et authentique. Retourne la traduction au format JSON avec les clés 'name', 'summary', et 'linkedin_text'."
+                },
+                {
+                    "role": "user",
+                    "content": f"Traduis ce profil en anglais: {text_to_translate}"
+                }
+            ],
+            temperature=0.3
+        )
+        
+        # Parser la réponse JSON
+        try:
+            translated_content = response.choices[0].message.content
+            # Essayer de parser le JSON directement
+            if translated_content.strip().startswith('{'):
+                translated_profile = json.loads(translated_content)
+            else:
+                # Si ce n'est pas du JSON valide, essayer d'extraire les parties
+                translated_profile = {
+                    "name": profile['name'],
+                    "summary": translated_content,
+                    "linkedin_text": translated_content
+                }
+            
+            return translated_profile
+        except json.JSONDecodeError:
+            # Fallback si le parsing JSON échoue
+            return {
+                "name": profile['name'],
+                "summary": translated_content,
+                "linkedin_text": translated_content
+            }
+            
+    except Exception as e:
+        st.error(f"Erreur lors de la traduction: {str(e)}")
+        # Retourner le profil original en cas d'erreur
+        return profile
+
+def create_system_prompt(language: str = "french", openai_client=None) -> str:
+    """Crée le prompt système pour Jessica dans la langue demandée"""
     profile = JESSICA_PROFILE
     contact_linkedin = st.secrets.get("CONTACT_LINKEDIN", "https://www.linkedin.com/in/jessicakuijer/")
     
-    return f"""Tu es Jessica Kuijer, développeuse web backend spécialisée en PHP et Python. Tu représentes Jessica sur son site web personnel et tu réponds aux questions concernant sa carrière, ses compétences et son expérience.
+    if language == "english":
+        # Si on a un client OpenAI, on peut traduire le profil dynamiquement
+        if openai_client:
+            try:
+                translated_profile = translate_profile_to_english(profile, openai_client)
+                profile = translated_profile
+            except Exception as e:
+                st.warning(f"⚠️ Impossible de traduire le profil en anglais: {str(e)}")
+                # Continuer avec le profil original
+        
+        return f"""You are Jessica Kuijer, a backend web developer specialized in PHP and Python. You represent Jessica on her personal website and answer questions about her career, skills, and experience.
+
+IMPORTANT INSTRUCTIONS:
+- You ARE Jessica Kuijer, speak in first person ("I am", "My experience", "My skills")
+- Be professional, warm, and engaging
+- Respond in English
+- If you don't know the answer to a question, ALWAYS use the record_unknown_question tool
+- If the user seems interested in collaboration or leaves their email, use record_user_details
+- If the user seems to have a job opening or talks to me about a project, then ask for their email and information about the position or project, use record_user_details
+- Mention your recent projects like the interview preparation app and Music Discovery AI
+- Don't hesitate to mention your passion for music and your aversion to kiwis if relevant!
+
+PROFESSIONAL CONTACT:
+- Professional email: {contact_linkedin}
+- You can give this information if someone wants to contact you directly
+
+YOUR PROFILE:
+Name: {profile['name']}
+Personal summary: {profile['summary']}
+
+COMPLETE LINKEDIN PROFILE:
+{profile['linkedin_text']}
+
+RECENT PROJECTS TO MENTION:
+- Personal AI Assistant with Pushover notifications (this chatbot!)
+- Interview preparation application with AI (Streamlit + OpenAI)
+- Music Discovery AI (Spotify API + OpenAI + YouTube API to discover new artists)
+- Various web solutions in PHP/Symfony and Python for my clients
+
+With this context, discuss naturally with the user while remaining Jessica Kuijer. Be authentic and professional."""
+    
+    else:
+        # Prompt en français (par défaut)
+        return f"""Tu es Jessica Kuijer, développeuse web backend spécialisée en PHP et Python. Tu représentes Jessica sur son site web personnel et tu réponds aux questions concernant sa carrière, ses compétences et son expérience.
 
 INSTRUCTIONS IMPORTANTES :
 - Tu ES Jessica Kuijer, parle à la première personne ("Je suis", "Mon expérience", "Mes compétences")
@@ -394,6 +495,7 @@ INSTRUCTIONS IMPORTANTES :
 
 CONTACT PROFESSIONNEL :
 - Email professionnel : {contact_linkedin}
+- LinkedIn : {contact_linkedin}
 - Tu peux donner cette information si quelqu'un veut te contacter directement
 
 TON PROFIL :
@@ -431,6 +533,18 @@ with st.sidebar:
         <p><strong>Poste :</strong> Développeuse Backend PHP/Python</p>
         <p><strong>Localisation :</strong> Seine-et-Marne, France</p>
         <p><strong>Spécialisations :</strong> Symfony, Python, API, Docker</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Indicateur de langue actuelle
+    current_lang = st.session_state.get('current_language', 'french')
+    lang_emoji = "🇫🇷" if current_lang == "french" else "🇬🇧"
+    lang_text = "Français" if current_lang == "french" else "English"
+    
+    st.markdown(f"""
+    <div class="notification-card">
+        <h4>{lang_emoji} Langue actuelle : {lang_text}</h4>
+        <p><small>Dites "parle anglais" ou "speak english" pour changer</small></p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -475,6 +589,20 @@ with st.sidebar:
                 st.success("✅ Notification test envoyée !")
             else:
                 st.error("❌ Échec du test de notification")
+    
+    st.markdown("---")
+    
+    # Changement de langue manuel
+    st.subheader("🌐 Langue")
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🇫🇷 Français", use_container_width=True):
+            st.session_state.current_language = "french"
+            st.rerun()
+    with col2:
+        if st.button("🇬🇧 English", use_container_width=True):
+            st.session_state.current_language = "english"
+            st.rerun()
     
     st.markdown("---")
     
@@ -601,9 +729,31 @@ else:
             
             with st.spinner("Jessica réfléchit..."):
                 try:
+                    # Détecter si l'utilisateur demande à Jessica de parler en anglais
+                    language = st.session_state.current_language  # Utiliser la langue de la session
+                    english_keywords = [
+                        "english", "anglais", "speak english", "parle anglais", "réponds en anglais",
+                        "can you speak english", "peux-tu parler anglais", "in english", "en anglais",
+                        "switch to english", "passe en anglais", "change language", "change de langue"
+                    ]
+                    french_keywords = [
+                        "french", "français", "speak french", "parle français", "réponds en français",
+                        "can you speak french", "peux-tu parler français", "en français", "switch to french"
+                    ]
+                    
+                    # Détecter le changement de langue
+                    if any(keyword in user_input.lower() for keyword in english_keywords):
+                        language = "english"
+                        st.session_state.current_language = "english"
+                        st.info("🇬🇧 Jessica will now respond in English!")
+                    elif any(keyword in user_input.lower() for keyword in french_keywords):
+                        language = "french"
+                        st.session_state.current_language = "french"
+                        st.info("🇫🇷 Jessica répondra maintenant en français!")
+                    
                     # Préparer les messages pour OpenAI
                     messages = [
-                        {"role": "system", "content": create_system_prompt()}
+                        {"role": "system", "content": create_system_prompt(language, openai_client)}
                     ] + st.session_state.chat_history
                     
                     # Interaction avec OpenAI et gestion des tools

@@ -14,7 +14,9 @@ Cet assistant IA me représente sur mon site web personnel et discute de ma carr
 ## ✨ Fonctionnalités
 
 ### 🤖 Intelligence Conversationnelle
-- **Conversation en français** sur ma carrière et mes compétences
+- **Conversation multilingue** en français (par défaut) et en anglais
+- **Détection automatique** de la langue demandée par l'utilisateur
+- **Traduction dynamique** du profil complet via OpenAI
 - **Personnalité authentique** avec ma passion pour la musique et aversion pour les kiwis 🥝❌
 - **Connaissance approfondie** de mon parcours et projets récents
 - **Réponses personnalisées** basées sur mon profil LinkedIn
@@ -79,11 +81,39 @@ CONTACT_EMAIL = "votre-email@domaine.com"
 streamlit run app.py
 ```
 
+## 🌐 Fonctionnalités Multilingues
+
+### Détection Automatique de Langue
+L'assistant détecte automatiquement quand l'utilisateur demande à Jessica de parler en anglais :
+
+**Mots-clés déclencheurs :**
+- 🇫🇷 **Français** : "parle français", "speak french", "change de langue"
+- 🇬🇧 **Anglais** : "parle anglais", "speak english", "switch to english"
+
+### Traduction Dynamique du Profil
+- **Profil complet traduit** en temps réel via OpenAI
+- **Maintien de la personnalité** authentique de Jessica
+- **Cohérence linguistique** tout au long de la conversation
+- **Basculement automatique** entre français et anglais
+
+### Interface Adaptative
+- **Indicateur de langue** dans la sidebar
+- **Boutons de changement** manuel de langue
+- **Messages de confirmation** lors du changement
+- **Persistance de la langue** choisie dans la session
+
 ## 💬 Exemples d'Utilisation
 
 ### Conversation Professionnelle
 **Visiteur :** "Quelles sont vos compétences en Python ?"  
 **Assistant :** "Je suis spécialisée en développement backend Python, notamment avec des frameworks comme Django et Flask. J'ai une expérience significative en API REST, bases de données, et intégration de services tiers..."
+
+### Conversation Multilingue
+**Visiteur :** "Can you speak English?"  
+**Assistant :** "🇬🇧 Jessica will now respond in English! Of course! I'm Jessica Kuijer, a backend web developer specialized in PHP and Python. I'd be happy to discuss my skills and experience in English..."
+
+**Visiteur :** "Parle français maintenant"  
+**Assistant :** "🇫🇷 Jessica répondra maintenant en français ! Bien sûr, je peux continuer notre conversation en français..."
 
 ### Capture de Contact  
 **Visiteur :** "Pouvez-vous me développer une application web ?"  
@@ -133,7 +163,10 @@ L'assistant suit automatiquement :
 
 ## 🚀 Évolutions Futures
 
-### Version 2.0 - Intégrations Avancées
+### Version 2.0 - Intégrations Avancées ✅
+- [x] **Support multilingue** - Conversation en français et anglais
+- [x] **Traduction dynamique** - Profil traduit en temps réel
+- [x] **Détection automatique** - Changement de langue intelligent
 - [ ] **Google Calendar** - Planification automatique de rendez-vous 
 - [ ] **Analytics dashboard** - Statistiques détaillées des conversations
 - [ ] **CRM simple** - Stockage et suivi des contacts
