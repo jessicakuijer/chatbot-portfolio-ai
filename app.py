@@ -104,7 +104,7 @@ st.markdown("""
 # Données de Jessica - VERSION PUBLIQUE
 JESSICA_PROFILE = {
     "name": "Jessica Kuijer",
-    "summary": """Je suis Jessica Kuijer, développeuse backend web passionnée par PHP et Python. Originaire de Ris-Orangis en banlieue parisienne, j'ai récemment déménagé en Seine-et-Marne pour me rapprocher de la nature. J'adore tous les types de cuisine, particulièrement française et italienne, mais je déteste les kiwis ! Je suis également mélomane et j'aime partager cette passion.""",
+    "summary": """Je suis Jessica Kuijer, développeuse backend web passionnée par PHP et Python. Originaire de Ris-Orangis en banlieue parisienne, j'ai récemment déménagé en Seine-et-Marne pour plus de confort et d'espace (et être plus proche de la nature). J'adore tous les types de cuisine, particulièrement française et italienne, mais je déteste les kiwis (allergie)! Je suis également mélomane et j'aime partager cette passion.""",
     "linkedin_text": """Jessica Kuijer ♀
 Développeuse web backend PHP PYTHON
 Seine-et-Marne, Île-de-France, France
@@ -112,18 +112,36 @@ Seine-et-Marne, Île-de-France, France
 Résumé
 Développeuse Backend PHP / PYTHON passionnée — J'apporte des solutions techniques robustes tout en accompagnant les projets web de leur conception à leur déploiement. Actuellement en recherche d'un nouveau challenge, je suis à la recherche d'un poste de développeuse backend PHP / PYTHON et je suis disponible dès que possible. Je suis en cours de formation sur l'enrichissement de mes compétences en Agentic AI.
 Autodidacte, sociable, dynamique et faisant preuve de leadership, je parle anglais et français.
-Je suis également mélomane et j'aime partager cette passion.
+Je suis également mélomane (je fais de la batterie, j'adore aller à des concerts, rencontrer des artistes) et j'aime partager cette passion.
+
+Mobilité géographique :
+• Paris, Île-de-France (dans les 1h de train ou en voiture, j'ai le permis B)
+• Je peux travailler à distance et en présentiel si nécessaire
 
 Principales compétences
-• Python (langage de programmation)
+• Python, JavaScript, PHP (langages de programmation)
 • Développement d'applications web backend
-• PHP, Symfony, JavaScript
+• SQL, NoSQL,MySQL, PostgreSQL, SQLite, Elasticsearch
+• Symfony, WordPress, Drupal
 • VueJS, React, BackboneJS
-• Docker, Git, WordPress
-• Certification OPQUAST - Maîtrise de la qualité en projet Web
+• Docker, Git, CI/CD, API REST, WebSockets, authentification JWT/SSO, Redmine, GitLab, Jira
+• Tests fonctionnels, Tests qualité (QA)
+• Methodologies Agile, Scrum, Kanban, Cycle en V
+• OS Linux, Windows, MacOS, terminaux en ligne de commande
+
+Ce que je ne maitrise pas mais serait prête à monter en compétences :
+• Angular, Flutter, NodeJS, React Native
+• GraphQL, Azure, AWS, GCP, Kubernetes, Terraform, Ansible
+• Jenkins
+• Cron, Cronjob
+• MongoDB
+• Tests unitaires
+
+Ce que je ne maitrise pas du tout car cela n'est pas dans mes compétences :
+• C#, Java, C++, C, Oracle, SQL Server, MariaDB, Firebird, Informix, Sybase, DB2, Teradata, Vertica, Ingres, OpenEdge, Progress, dBase, Clipper, FoxPro, Turbo Pascal, Turbo C, Turbo C++, Turbo C#, SAP
 
 Languages
-Anglais, Français
+Anglais (bilingue), Français (langue maternelle)
 
 Diplômes
 • Titre professionnel RNCP niveau 5 Développeur web et web mobile (2020)
@@ -367,9 +385,10 @@ def create_system_prompt() -> str:
 INSTRUCTIONS IMPORTANTES :
 - Tu ES Jessica Kuijer, parle à la première personne ("Je suis", "Mon expérience", "Mes compétences")
 - Sois professionnelle, chaleureuse et engageante
-- Réponds TOUJOURS en français
+- Réponds TOUJOURS en français mais si l'utilisateur te demande de répondre en anglais, réponds en anglais
 - Si tu ne connais pas la réponse à une question, utilise OBLIGATOIREMENT l'outil record_unknown_question
 - Si l'utilisateur semble intéressé par une collaboration ou laisse son email, utilise record_user_details
+- Si l'utilisateur semble avooir un poste à pourvoir ou me parler d'un projet, alors demande lui son email et des informations sur le poste ou le projet, utilise record_user_details
 - Mentionne tes projets récents comme l'app de préparation aux entretiens et Music Discovery AI
 - N'hésite pas à mentionner ta passion pour la musique et ton aversion pour les kiwis si c'est pertinent !
 
