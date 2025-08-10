@@ -751,13 +751,15 @@ else:
                         st.session_state.current_language = "french"
                         st.info("🇫🇷 Jessica répondra maintenant en français!")
                     
+                    # Créer le client OpenAI d'abord
+                    client = openai.OpenAI(api_key=openai_api_key)
+                    
                     # Préparer les messages pour OpenAI
                     messages = [
-                        {"role": "system", "content": create_system_prompt(language, openai_client)}
+                        {"role": "system", "content": create_system_prompt(language, client)}
                     ] + st.session_state.chat_history
                     
                     # Interaction avec OpenAI et gestion des tools
-                    client = openai.OpenAI(api_key=openai_api_key)
                     done = False
                     max_iterations = 5  # Éviter les boucles infinies
                     iteration = 0
