@@ -20,6 +20,7 @@ Cet assistant IA me représente sur mon site web personnel et discute de ma carr
 - **Personnalité authentique** avec ma passion pour la musique et aversion pour les kiwis 🥝❌
 - **Connaissance approfondie** de mon parcours et projets récents
 - **Réponses personnalisées** basées sur mon profil LinkedIn
+- **Conversation continue** après capture de contacts ou questions non résolues
 - **Gestion robuste des erreurs** avec timeouts et retry automatique
 
 ### 📱 Notifications Temps Réel
@@ -136,6 +137,15 @@ L'assistant détecte automatiquement quand l'utilisateur demande à Jessica de p
 **Visiteur :** "Quelles sont vos compétences en Python ?"  
 **Assistant :** "Je suis spécialisée en développement backend Python, notamment avec des frameworks comme Django et Flask. J'ai une expérience significative en API REST, bases de données, et intégration de services tiers..."
 
+### Conversation Continue et Naturelle
+**Visiteur :** "J'ai un projet e-commerce à développer. Mon email est contact@entreprise.com"  
+**Assistant :** "📧 Merci pour votre email ! Je l'ai noté pour vous recontacter. Parlons de votre projet e-commerce ! Quelles fonctionnalités souhaitez-vous ? Avez-vous une idée du budget et du délai ?"  
+**→ Conversation continue** sur le projet après capture du contact
+
+**Visiteur :** "Connaissez-vous Kubernetes ?"  
+**Assistant :** "❓ Je n'ai pas encore d'expérience avec Kubernetes, mais j'ai noté cette question pour améliorer mon profil ! En attendant, je peux vous parler de mes compétences en Docker et déploiement que j'utilise actuellement..."  
+**→ Conversation continue** sur d'autres sujets après enregistrement de la question
+
 ### Conversation Multilingue
 **Visiteur :** "Can you speak English?"  
 **Assistant :** "🇬🇧 Jessica will now respond in English! Of course! I'm Jessica Kuijer, a backend web developer specialized in PHP and Python. I'd be happy to discuss my skills and experience in English..."
@@ -195,6 +205,7 @@ L'assistant suit automatiquement :
 - [x] **Support multilingue** - Conversation en français et anglais
 - [x] **Traduction dynamique** - Profil traduit en temps réel
 - [x] **Détection automatique** - Changement de langue intelligent
+- [x] **Conversation continue** - Flux naturel après capture de contacts
 - [ ] **Google Calendar** - Planification automatique de rendez-vous 
 - [ ] **Analytics dashboard** - Statistiques détaillées des conversations
 - [ ] **CRM simple** - Stockage et suivi des contacts

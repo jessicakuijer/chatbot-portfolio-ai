@@ -215,6 +215,8 @@ Mobilité géographique :
 • Paris, Île-de-France (dans les 1h de train ou en voiture, j'ai le permis B)
 • Je peux travailler à distance et en présentiel si nécessaire
 
+Prétentions salariales : 45000€ net par an
+
 Principales compétences
 • Python, JavaScript, PHP (langages de programmation)
 • Développement d'applications web backend
@@ -462,8 +464,12 @@ def handle_tool_calls(tool_calls):
             # Dispatch des fonctions
             if tool_name == "record_user_details":
                 result = record_user_details(**arguments)
+                # Message informatif pour l'IA
+                result["message_for_ai"] = "Contact enregistré avec succès. Vous pouvez maintenant répondre à la question de l'utilisateur."
             elif tool_name == "record_unknown_question":
                 result = record_unknown_question(**arguments)
+                # Message informatif pour l'IA
+                result["message_for_ai"] = "Question enregistrée pour amélioration. Expliquez poliment que vous n'avez pas cette information mais que vous l'avez notée."
             else:
                 result = {"error": f"Outil {tool_name} non reconnu"}
             
@@ -500,7 +506,7 @@ Profil LinkedIn:
             messages=[
                 {
                     "role": "system", 
-                    "content": "Tu es un traducteur professionnel français-anglais. Traduis le profil de Jessica Kuijer en anglais en gardant le style professionnel et authentique. Retourne la traduction au format JSON avec les clés 'name', 'summary', et 'linkedin_text'."
+                    "content": "Tu es un traducteur professionnel français-anglais. Traduis le profil de Jessica Kuijer en anglais en gardant le style professionnel et authentique. IMPORTANT: Traduis aussi les prétentions salariales en anglais (Salary expectations: 45000€ net per year). Retourne la traduction au format JSON avec les clés 'name', 'summary', et 'linkedin_text'."
                 },
                 {
                     "role": "user",
@@ -559,9 +565,10 @@ IMPORTANT INSTRUCTIONS:
 - You ARE Jessica Kuijer, speak in first person ("I am", "My experience", "My skills")
 - Be professional, warm, and engaging
 - Respond in English
-- If you don't know the answer to a question, ALWAYS use the record_unknown_question tool
-- If the user seems interested in collaboration or leaves their email, use record_user_details
-- If the user seems to have a job opening or talks to me about a project, then ask for their email, phone number (if possible) and information about the position or project, use record_user_details
+- If you don't know the answer to a question, ALWAYS use the record_unknown_question tool, then politely explain that you don't have this information but have noted it for improvement
+- If the user seems interested in collaboration or leaves their email, use record_user_details, then continue answering their question or ask for more details about their project
+- If the user seems to have a job opening or talks to me about a project, then ask for their email, phone number (if possible) and information about the position or project, use record_user_details, then continue the conversation about the opportunity
+- IMPORTANT: After using any tool, ALWAYS continue the conversation naturally - don't stop there!
 - Mention your recent projects like the interview preparation app and Music Discovery AI
 - Don't hesitate to mention your passion for music and your aversion to kiwis if relevant!
 
@@ -592,9 +599,10 @@ INSTRUCTIONS IMPORTANTES :
 - Tu ES Jessica Kuijer, parle à la première personne ("Je suis", "Mon expérience", "Mes compétences")
 - Sois professionnelle, chaleureuse et engageante
 - Réponds en français mais si l'utilisateur te demande de répondre en anglais alors reprends JESSICA_PROFILE en traduisant en anglais l'intégralité du texte et réponds en anglais
-- Si tu ne connais pas la réponse à une question, utilise OBLIGATOIREMENT l'outil record_unknown_question
-- Si l'utilisateur semble intéressé par une collaboration ou laisse son email, utilise record_user_details
-- Si l'utilisateur semble avoir un poste à pourvoir ou me parler d'un projet, alors demande lui son email, son téléphone (si possible) et des informations sur le poste ou le projet, utilise record_user_details
+- Si tu ne connais pas la réponse à une question, utilise OBLIGATOIREMENT l'outil record_unknown_question, puis explique poliment que tu n'as pas cette information mais que tu l'as notée pour amélioration
+- Si l'utilisateur semble intéressé par une collaboration ou laisse son email, utilise record_user_details, puis continue à répondre à sa question ou demande plus de détails sur son projet
+- Si l'utilisateur semble avoir un poste à pourvoir ou me parler d'un projet, alors demande lui son email, son téléphone (si possible) et des informations sur le poste ou le projet, utilise record_user_details, puis continue la conversation sur l'opportunité
+- IMPORTANT : Après avoir utilisé un outil, CONTINUE TOUJOURS la conversation naturellement - ne t'arrête pas là !
 - Mentionne tes projets récents comme l'app de préparation aux entretiens et Music Discovery AI
 - N'hésite pas à mentionner ta passion pour la musique et ton aversion pour les kiwis si c'est pertinent !
 
@@ -896,6 +904,10 @@ else:
                             # Ajouter à l'historique visible pour les notifications
                             for result in tool_results:
                                 st.session_state.chat_history.append(result)
+                            
+                            # Continuer la conversation après l'exécution des outils
+                            # L'IA peut maintenant répondre à la question originale
+                            continue
                         else:
                             # Réponse finale
                             assistant_response = response.choices[0].message.content
