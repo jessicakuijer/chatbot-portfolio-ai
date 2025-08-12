@@ -473,11 +473,13 @@ def handle_tool_calls(tool_calls):
             else:
                 result = {"error": f"Outil {tool_name} non reconnu"}
             
+            # Créer le message d'outil avec le bon format OpenAI
             results.append({
                 "role": "tool",
                 "content": json.dumps(result),
                 "tool_call_id": tool_call.id
             })
+            
         except Exception as e:
             st.error(f"Erreur dans l'exécution de l'outil {tool_call.function.name}: {str(e)}")
             results.append({
@@ -803,13 +805,7 @@ else:
                 st.markdown(f'<div class="message-user"><strong>Visiteur :</strong> {message["content"]}</div>', unsafe_allow_html=True)
             elif message["role"] == "assistant":
                 st.markdown(f'<div class="message-assistant"><strong>Jessica :</strong> {message["content"]}</div>', unsafe_allow_html=True)
-            elif message["role"] == "tool":
-                try:
-                    tool_result = json.loads(message["content"])
-                    if "message" in tool_result:
-                        st.markdown(f'<div class="message-tool">🔧 {tool_result["message"]}</div>', unsafe_allow_html=True)
-                except json.JSONDecodeError:
-                    pass  # Ignore les erreurs de parsing JSON
+            # Les messages d'outils ne sont plus affichés car ils ne sont plus dans l'historique visible
     
     # Zone de saisie
     with st.form(key="chat_form", clear_on_submit=True):
@@ -897,13 +893,13 @@ else:
                             # Traiter les appels d'outils
                             tool_results = handle_tool_calls(tool_calls)
                             
-                            # Ajouter les messages d'outils à l'historique
+                            # Ajouter les messages d'outils à l'historique OpenAI
                             messages.append(message)
                             messages.extend(tool_results)
                             
-                            # Ajouter à l'historique visible pour les notifications
-                            for result in tool_results:
-                                st.session_state.chat_history.append(result)
+                            # Ne pas ajouter les résultats des outils à l'historique visible
+                            # car ils ne sont pas des messages de conversation normaux
+                            # st.session_state.chat_history.append(result)  # Ligne supprimée
                             
                             # Continuer la conversation après l'exécution des outils
                             # L'IA peut maintenant répondre à la question originale
