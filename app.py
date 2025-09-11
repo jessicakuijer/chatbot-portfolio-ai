@@ -215,7 +215,7 @@ Mobilité géographique :
 • Paris, Île-de-France (dans les 1h de train ou en voiture, j'ai le permis B)
 • Je peux travailler à distance et en présentiel si nécessaire
 
-Prétentions salariales : 45000€ net par an
+Prétentions salariales : 45000€ brut par an
 
 Principales compétences
 • Python, JavaScript, PHP (langages de programmation)
@@ -508,7 +508,7 @@ Profil LinkedIn:
             messages=[
                 {
                     "role": "system", 
-                    "content": "Tu es un traducteur professionnel français-anglais. Traduis le profil de Jessica Kuijer en anglais en gardant le style professionnel et authentique. IMPORTANT: Traduis aussi les prétentions salariales en anglais (Salary expectations: 45000€ net per year). Retourne la traduction au format JSON avec les clés 'name', 'summary', et 'linkedin_text'."
+                    "content": "Tu es un traducteur professionnel français-anglais. Traduis le profil de Jessica Kuijer en anglais en gardant le style professionnel et authentique. IMPORTANT: Traduis aussi les prétentions salariales en anglais (Salary expectations: 45000€ brut per year). Retourne la traduction au format JSON avec les clés 'name', 'summary', et 'linkedin_text'."
                 },
                 {
                     "role": "user",
