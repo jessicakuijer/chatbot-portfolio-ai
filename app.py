@@ -316,6 +316,8 @@ if 'contact_count' not in st.session_state:
     st.session_state.contact_count = 0
 if 'current_language' not in st.session_state:
     st.session_state.current_language = "french"
+if 'is_processing' not in st.session_state:
+    st.session_state.is_processing = False
 
 def send_pushover_notification(message: str, pushover_user: str, pushover_token: str):
     """Envoie une notification Pushover avec gestion d'erreurs améliorée"""
@@ -818,7 +820,11 @@ else:
         
         col1, col2, col3 = st.columns([3, 1, 1])
         with col1:
-            submitted = st.form_submit_button("💬 Envoyer le message", use_container_width=True)
+            submitted = st.form_submit_button(
+                "💬 Envoyer le message" if not st.session_state.is_processing else "⏳ Jessica réfléchit...",
+                use_container_width=True,
+                disabled=st.session_state.is_processing
+            )
         with col2:
             clear_chat = st.form_submit_button("🗑️ Effacer", use_container_width=True)
         with col3:
@@ -834,7 +840,10 @@ else:
             st.session_state.notification_count = 0
             st.rerun()
         
-        if submitted and user_input:
+        if submitted and user_input and not st.session_state.is_processing:
+            # Marquer comme en cours de traitement
+            st.session_state.is_processing = True
+            
             # Ajouter le message utilisateur
             st.session_state.chat_history.append({"role": "user", "content": user_input})
             
@@ -916,6 +925,9 @@ else:
                     if iteration >= max_iterations:
                         st.warning("⚠️ Conversation interrompue après trop d'itérations")
                     
+                    # Réinitialiser l'état de traitement
+                    st.session_state.is_processing = False
+                    
                     # Recharger la page pour afficher les nouveaux messages
                     st.rerun()
                     
@@ -925,6 +937,8 @@ else:
                     st.error(f"Erreur lors de la conversation : {str(e)}")
                     # En cas d'erreur, on peut quand même garder le message utilisateur
                     st.info("💬 Votre message a été enregistré malgré l'erreur")
+                    # Réinitialiser l'état de traitement en cas d'erreur
+                    st.session_state.is_processing = False
 
 # Footer
 st.markdown("---")
