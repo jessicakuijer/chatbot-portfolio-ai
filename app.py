@@ -840,13 +840,18 @@ else:
             st.session_state.notification_count = 0
             st.rerun()
         
-        if submitted and user_input and not st.session_state.is_processing:
+        if submitted and user_input:
             # Marquer comme en cours de traitement
             st.session_state.is_processing = True
             
             # Ajouter le message utilisateur
             st.session_state.chat_history.append({"role": "user", "content": user_input})
             
+            # Recharger immédiatement pour désactiver le bouton
+            st.rerun()
+            
+        # Traitement de la réponse de l'IA si on est en cours de traitement
+        if st.session_state.is_processing and len(st.session_state.chat_history) > 0 and st.session_state.chat_history[-1]["role"] == "user":
             with st.spinner("Jessica réfléchit..."):
                 try:
                     # Détecter si l'utilisateur demande à Jessica de parler en anglais
