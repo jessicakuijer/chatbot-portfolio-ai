@@ -810,9 +810,9 @@ else:
     # Zone de saisie
     with st.form(key="chat_form", clear_on_submit=True):
         user_input = st.text_area(
-            "Tapez votre message :", 
-            height=100, 
-            placeholder="Bonjour Jessica ! Je m'intéresse à votre profil de développeuse...",
+            "## 💬 Tapez votre message ci-dessous :", 
+            height=120, 
+            placeholder="Votre message...",
             key="chat_input_textarea"
         )
         
