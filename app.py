@@ -692,18 +692,18 @@ with st.sidebar:
         </div>
         """, unsafe_allow_html=True)
     
-    # Test de notification
-    if secrets_loaded and st.button("📱 Tester Notification"):
-        with st.spinner("Envoi du test..."):
-            success = send_pushover_notification(
-                "🤖 Test de votre assistant Jessica IA ! Ça marche parfaitement !", 
-                pushover_user, 
-                pushover_token
-            )
-            if success:
-                st.success("✅ Notification test envoyée !")
-            else:
-                st.error("❌ Échec du test de notification")
+    # Test de notification - DÉSACTIVÉ TEMPORAIREMENT
+    # if secrets_loaded and st.button("📱 Tester Notification"):
+    #     with st.spinner("Envoi du test..."):
+    #         success = send_pushover_notification(
+    #             "🤖 Test de votre assistant Jessica IA ! Ça marche parfaitement !", 
+    #             pushover_user, 
+    #             pushover_token
+    #         )
+    #         if success:
+    #             st.success("✅ Notification test envoyée !")
+    #         else:
+    #             st.error("❌ Échec du test de notification")
     
     st.markdown("---")
     
