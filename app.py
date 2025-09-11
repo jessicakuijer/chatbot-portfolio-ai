@@ -821,7 +821,7 @@ else:
         col1, col2, col3 = st.columns([3, 1, 1])
         with col1:
             submitted = st.form_submit_button(
-                "💬 Envoyer le message" if not st.session_state.is_processing else "⏳ Jessica réfléchit...",
+                "💬 Envoyer le message" if not st.session_state.is_processing else "⏳ en cours de traitement...",
                 use_container_width=True,
                 disabled=st.session_state.is_processing
             )
