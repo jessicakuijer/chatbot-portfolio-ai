@@ -713,11 +713,11 @@ with st.sidebar:
     with col1:
         if st.button("🇫🇷 Français", use_container_width=True):
             st.session_state.current_language = "french"
-            st.experimental_rerun()
+            st.rerun()
     with col2:
         if st.button("🇬🇧 English", use_container_width=True):
             st.session_state.current_language = "english"
-            st.experimental_rerun()
+            st.rerun()
     
     st.markdown("---")
     
@@ -832,7 +832,7 @@ else:
             st.session_state.chat_history = []
             st.session_state.contact_count = 0
             st.session_state.notification_count = 0
-            st.experimental_rerun()
+            st.rerun()
         
         if submitted and user_input:
             # Ajouter le message utilisateur
@@ -917,7 +917,7 @@ else:
                         st.warning("⚠️ Conversation interrompue après trop d'itérations")
                     
                     # Recharger la page pour afficher les nouveaux messages
-                    st.experimental_rerun()
+                    st.rerun()
                     
                 except openai.OpenAIError as e:
                     st.error(f"Erreur OpenAI : {str(e)}")
