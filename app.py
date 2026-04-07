@@ -68,15 +68,59 @@ st.markdown("""
         color: #000000 !important;
     }
     
-    /* En-tête principal */
+    /* En-tête principal — le fond violet reste, le texte passe sur panneau lisible */
     .main-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem;
-        border-radius: 15px;
-        color: white;
+        background: linear-gradient(145deg, #4f46e5 0%, #6d28d9 45%, #5b21b6 100%);
+        padding: 2rem 1.25rem 2.25rem;
+        border-radius: 16px;
         text-align: center;
         margin-bottom: 2rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        box-shadow: 0 12px 40px rgba(79, 70, 229, 0.28), 0 2px 8px rgba(0,0,0,0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .main-header-inner {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 1.5rem 1.35rem;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        border-radius: 14px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+    /* Priorité sur .stMarkdown h1/h3/p { color: #000 !important } */
+    .main-header .main-header-inner h1 {
+        font-size: clamp(1.35rem, 3.2vw, 1.9rem);
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+        margin: 0 0 0.65rem 0;
+        color: #ffffff !important;
+        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+    }
+    .main-header .main-header-inner h3 {
+        font-size: clamp(0.95rem, 2.1vw, 1.12rem);
+        font-weight: 500;
+        line-height: 1.45;
+        margin: 0 0 1rem 0;
+        color: #f1f5f9 !important;
+        text-shadow: 0 1px 10px rgba(0, 0, 0, 0.15);
+    }
+    .main-header .main-header-inner .main-header-lead {
+        margin: 0;
+        font-size: 1.02rem;
+        line-height: 1.55;
+        color: #e2e8f0 !important;
+        font-weight: 400;
+    }
+    .main-header-divider {
+        width: 3rem;
+        height: 3px;
+        margin: 0 auto 1rem;
+        border-radius: 999px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent);
+        opacity: 0.9;
     }
     
     /* Conteneur de chat */
@@ -191,7 +235,7 @@ st.markdown("""
         background-color: #f8f9fa !important;
     }
     
-    /* Forcer les couleurs de texte */
+    /* Texte markdown en noir (sauf le hero : règles .main-header .main-header-inner plus spécifiques) */
     .stMarkdown p, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
         color: #000000 !important;
     }
@@ -639,9 +683,12 @@ Avec ce contexte, discute naturellement avec l'utilisateur en restant Jessica Ku
 # En-tête principal
 st.markdown("""
 <div class="main-header">
-    <h1>🤖 Jessica Kuijer - Assistant IA</h1>
-    <h3>Votre représentante virtuelle intelligente avec notifications temps réel</h3>
-    <p>Discutez avec moi de mon parcours, mes compétences et mes projets !</p>
+    <div class="main-header-inner">
+        <h1>🤖 Jessica Kuijer — Assistant IA</h1>
+        <h3>Votre représentante virtuelle intelligente avec notifications temps réel</h3>
+        <div class="main-header-divider" aria-hidden="true"></div>
+        <p class="main-header-lead">Discutez avec moi de mon parcours, mes compétences et mes projets !</p>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
