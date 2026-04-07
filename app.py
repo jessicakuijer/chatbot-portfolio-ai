@@ -9,7 +9,7 @@ from pypdf import PdfReader  # Import ajouté
 
 # Configuration de la page
 st.set_page_config(
-    page_title="🤖 Jessica Kuijer - Assistant IA",
+    page_title="Jessica Kuijer - Assistant IA",
     page_icon="🤖",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -653,9 +653,9 @@ with st.sidebar:
     st.markdown(f"""
     <div class="profile-loaded">
         <h4>✅ {JESSICA_PROFILE['name']}</h4>
-        <p><strong>Poste :</strong> Développeuse Backend PHP/Python</p>
+        <p><strong>Poste :</strong> Développeuse Backend PHP/Python • Product builder orientée IA</p>
         <p><strong>Localisation :</strong> Seine-et-Marne, France</p>
-        <p><strong>Spécialisations :</strong> Symfony, Python, API, Docker</p>
+        <p><strong>Spécialisations :</strong> Symfony, Python, API, IA appliquée, architecture backend</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -793,15 +793,15 @@ else:
         st.markdown("""
         <div class="chat-container">
             <h4>👋 Bonjour ! Je suis Jessica Kuijer</h4>
-            <p>Développeuse Backend PHP/Python passionnée, je serais ravie de discuter avec vous !</p>
+            <p>Développeuse Backend PHP/Python devenue product builder orientée IA, je serais ravie d’échanger avec vous !</p>
             <p>🤔 <strong>Vous pouvez me demander :</strong></p>
             <ul>
-                <li>Mon parcours de reconversion depuis l'hôtellerie</li>
-                <li>Mes compétences en PHP, Python, Symfony</li>
-                <li>Mes projets récents (Music Discovery AI, etc.)</li>
-                <li>Mes disponibilités pour de nouveaux projets</li>
+                <li>Mon parcours de reconversion depuis l'hôtellerie vers la tech</li>
+                <li>Mes compétences en PHP, Python, Symfony et architecture backend</li>
+                <li>Mes projets récents (Assistant IA, Music Discovery AI, cybersécurité, etc.)</li>
+                <li>Les opportunités ou projets sur lesquels je pourrais apporter de la valeur</li>
             </ul>
-            <p>💡 Si vous avez un projet en tête, n'hésitez pas à me laisser votre email et votre téléphone ! 😊</p>
+            <p>💡 Si vous avez un projet ou une opportunité, n'hésitez pas à me laisser votre email et votre téléphone ! 😊</p>
         </div>
         """, unsafe_allow_html=True)
     
