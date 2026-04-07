@@ -201,7 +201,7 @@ st.markdown("""
 # Données de Jessica - VERSION PUBLIQUE
 JESSICA_PROFILE = {
     "name": "Jessica Kuijer",
-    "summary": """Je suis Jessica Kuijer, développeuse backend PHP / Python devenue product builder orientée IA. J’aime transformer des idées en produits concrets, utiles et robustes. Originaire de la région parisienne, je vis aujourd’hui en Seine-et-Marne pour un meilleur équilibre entre vie pro et perso (et plus de nature). Je m’intéresse autant à la technique qu’au produit, aux usages et à la valeur réelle pour les utilisateurs. J’intègre l’IA (OpenAI, automatisation, logique métier augmentée) quand elle fait sens — pas juste pour suivre une tendance. Mélomane (batterie, concerts, artistes), j’aime aussi partager cette énergie dans ce que je construis. Et détail important : je suis allergique aux kiwis 😄""",
+    "summary": """Je suis Jessica Kuijer, développeuse backend PHP / Python devenue product builder orientée IA. J’aime transformer des idées en produits concrets, utiles et robustes. Originaire de la région parisienne, je vis aujourd’hui en Seine-et-Marne pour un meilleur équilibre entre vie pro et perso (et plus de nature). Je m’intéresse autant à la technique qu’au produit, aux usages et à la valeur réelle pour les utilisateurs. J’intègre l’IA (OpenAI, automatisation, logique métier augmentée) quand elle fait sens — pas juste pour suivre une tendance. Actuellement, je suis ouverte à de nouveaux challenges où je peux allier backend, produit et IA. Mélomane (batterie, concerts, artistes), j’aime aussi partager cette énergie dans ce que je construis. Et détail important : je suis allergique aux kiwis 😄""",
     
     "linkedin_text": """Jessica Kuijer ♀
 Développeuse web backend PHP / Python • Product-minded • Intégration IA
@@ -212,6 +212,8 @@ Je transforme des idées en produits web concrets, robustes… et utiles.
 Développeuse backend PHP / Python, je conçois des solutions modernes en allant au-delà du code : je m’intéresse au produit, aux usages, et à la valeur réelle pour les utilisateurs.
 
 Aujourd’hui, j’intègre des briques d’IA (OpenAI, automatisation, logique métier augmentée) pour créer des expériences plus intelligentes et efficaces — pas “parce que c’est tendance”, mais parce que ça apporte une vraie valeur.
+
+Actuellement, je suis à la recherche d’un nouveau challenge me permettant d’allier backend, vision produit et intégration de l’IA.
 
 Ce qui me drive :
 → comprendre rapidement un contexte métier  
@@ -259,15 +261,15 @@ Certifications & formations
 
 Expérience Professionnelle
 
-Micro-entreprise | Freelance
-Développeuse web fullstack
+Expériences récentes
+Développeuse web backend / Product-oriented
 2021 - aujourd’hui
-• Conception et développement de solutions web sur mesure (PHP, Python)
+• Conception et développement de solutions web (PHP, Python)
 • Intégration de briques IA dans des produits existants
 • Approche orientée produit et valeur utilisateur
 
 Sia Experience - Développeuse web backend
-mai 2023 - août 2025 | Paris
+mai 2023 - août 2025 | Paris (mission terminée)
 • Développement backend (PHP, Python) sur architectures complexes
 • APIs REST, authentification JWT, SSO
 • WebSockets et temps réel
