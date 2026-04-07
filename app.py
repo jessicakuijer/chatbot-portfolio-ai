@@ -201,110 +201,106 @@ st.markdown("""
 # Données de Jessica - VERSION PUBLIQUE
 JESSICA_PROFILE = {
     "name": "Jessica Kuijer",
-    "summary": """Je suis Jessica Kuijer, développeuse backend web passionnée par PHP et Python. Originaire de Ris-Orangis en banlieue parisienne, j'ai récemment déménagé en Seine-et-Marne pour plus de confort et d'espace (et être plus proche de la nature). J'adore tous les types de cuisine, particulièrement française et italienne, mais je déteste les kiwis (allergie)! Je suis également mélomane et j'aime partager cette passion.""",
+    "summary": """Je suis Jessica Kuijer, développeuse backend PHP / Python devenue product builder orientée IA. J’aime transformer des idées en produits concrets, utiles et robustes. Originaire de la région parisienne, je vis aujourd’hui en Seine-et-Marne pour un meilleur équilibre entre vie pro et perso (et plus de nature). Je m’intéresse autant à la technique qu’au produit, aux usages et à la valeur réelle pour les utilisateurs. J’intègre l’IA (OpenAI, automatisation, logique métier augmentée) quand elle fait sens — pas juste pour suivre une tendance. Mélomane (batterie, concerts, artistes), j’aime aussi partager cette énergie dans ce que je construis. Et détail important : je suis allergique aux kiwis 😄""",
+    
     "linkedin_text": """Jessica Kuijer ♀
-Développeuse web backend PHP PYTHON
+Développeuse web backend PHP / Python • Product-minded • Intégration IA
 Seine-et-Marne, Île-de-France, France
 
 Résumé
-Développeuse Backend PHP / PYTHON passionnée — J'apporte des solutions techniques robustes tout en accompagnant les projets web de leur conception à leur déploiement. Actuellement en recherche d'un nouveau challenge, je suis à la recherche d'un poste de développeuse backend PHP / PYTHON et je suis disponible dès que possible. Je suis en cours de formation sur l'enrichissement de mes compétences en Agentic AI.
-Autodidacte, sociable, dynamique et faisant preuve de leadership, je parle anglais et français.
-Je suis également mélomane (je fais de la batterie, j'adore aller à des concerts, rencontrer des artistes) et j'aime partager cette passion.
+Je transforme des idées en produits web concrets, robustes… et utiles.
+Développeuse backend PHP / Python, je conçois des solutions modernes en allant au-delà du code : je m’intéresse au produit, aux usages, et à la valeur réelle pour les utilisateurs.
+
+Aujourd’hui, j’intègre des briques d’IA (OpenAI, automatisation, logique métier augmentée) pour créer des expériences plus intelligentes et efficaces — pas “parce que c’est tendance”, mais parce que ça apporte une vraie valeur.
+
+Ce qui me drive :
+→ comprendre rapidement un contexte métier  
+→ structurer des solutions simples à partir de problématiques complexes  
+→ livrer des outils fiables, maintenables et évolutifs  
+
+Autodidacte, directe, engagée — j’aime faire avancer les projets et les équipes.
+
+Je suis également mélomane (batterie, concerts, artistes) et j’aime partager cette passion.
 
 Mobilité géographique :
-• Paris, Île-de-France (dans les 1h de train ou en voiture, j'ai le permis B)
-• Je peux travailler à distance et en présentiel si nécessaire
-
-Prétentions salariales : 45000€ brut par an
+• Île-de-France (déplacements possibles)
+• Remote / hybride
 
 Principales compétences
-• Python, JavaScript, PHP (langages de programmation)
-• Développement d'applications web backend
-• SQL, NoSQL,MySQL, PostgreSQL, SQLite, Elasticsearch
-• Symfony, WordPress, Drupal
-• VueJS, React, BackboneJS
-• Docker, Git, CI/CD, API REST, WebSockets, authentification JWT/SSO, Redmine, GitLab, Jira
-• Tests fonctionnels, Tests qualité (QA)
-• Methodologies Agile, Scrum, Kanban, Cycle en V
-• OS Linux, Windows, MacOS, terminaux en ligne de commande
+• PHP (Symfony), Python  
+• Architecture backend, API REST, API Platform  
+• SQL / PostgreSQL / MySQL / Elasticsearch  
+• Monorepo (Turborepo), Docker, CI/CD  
+• Stripe (paiement, SCA), WebSockets  
+• IA appliquée (OpenAI, automatisation, logique métier augmentée)  
+• Performance backend, optimisation de requêtes  
+• Approche produit & UX backend  
 
-Ce que je ne maitrise pas mais serait prête à monter en compétences :
-• Angular, Flutter, NodeJS, React Native
-• GraphQL, Azure, AWS, GCP, Kubernetes, Terraform, Ansible
-• Jenkins
-• Cron, Cronjob
-• MongoDB
-• Tests unitaires
+Technologies complémentaires
+• JavaScript, React, VueJS  
+• Git, GitHub, GitLab  
+• Méthodologies Agile, Scrum  
 
-Ce que je ne maitrise pas du tout car cela n'est pas dans mes compétences :
-• C#, Java, C++, C, Oracle, SQL Server, MariaDB, Firebird, Informix, Sybase, DB2, Teradata, Vertica, Ingres, OpenEdge, Progress, dBase, Clipper, FoxPro, Turbo Pascal, Turbo C, Turbo C++, Turbo C#, SAP
+Ce que je peux rapidement monter en compétences
+• Cloud (AWS, GCP), Kubernetes  
+• Terraform, DevOps avancé  
+• GraphQL  
 
-Languages
-Anglais (bilingue), Français (langue maternelle)
+Langues
+• Français (langue maternelle)  
+• Anglais (professionnel)
 
-Diplômes
-• Titre professionnel RNCP niveau 5 Développeur web et web mobile (2020)
-
-Formations récentes et en cours
-• Formation Agentic AI - Udemy (2025)
-• Formation Scrum developper - SIA (2024)
-
-Certifications
-• Finisher Fresque du Climat Sia Partners
-• Certificat Contribution Climat
-• MOOC #WomenInDigital
-• Certification OPQUAST - Maîtrise de la qualité en projet Web
-• Techniques d'intégration Web (RS1447)
+Certifications & formations
+• Certification OPQUAST - Qualité Web  
+• The Complete Agentic AI Engineering Course (2025)  
+• Scrum Developer (Sia)  
+• MOOC #WomenInDigital  
+• Fresque du Climat  
 
 Expérience Professionnelle
 
+Micro-entreprise | Freelance
+Développeuse web fullstack
+2021 - aujourd’hui
+• Conception et développement de solutions web sur mesure (PHP, Python)
+• Intégration de briques IA dans des produits existants
+• Approche orientée produit et valeur utilisateur
+
 Sia Experience - Développeuse web backend
-mai 2023 - aout 2025 (2 ans 3 mois) | Paris, Île-de-France, France
-Consultante pour solutions de création d'interfaces web, TMA, backend (PHP, Python) au sein de SIA, BU Sia Experience.
-Développement backend d'endpoints et fonctionnalités selon cycle en V
-Système d'authentification JWT et implémentation SSO avec gestion des rôles
-Intégration websockets (Swoole) pour interactions temps réel entre utilisateurs
-Système de matching géographique avec calculs de distances (ST_Distance_Sphere)
-API REST avec requêtes récursives et technologie IA custom (CooPhronie)
-Interface d'administration avec pré-calculs statistiques
-Technologies : Symfony7, Python/Flask, PHP, MySQL/PostgreSQL, React, Docker, WebSockets
-Environnement : Redmine, GitLab, infrastructure microservices
+mai 2023 - août 2025 | Paris
+• Développement backend (PHP, Python) sur architectures complexes
+• APIs REST, authentification JWT, SSO
+• WebSockets et temps réel
+• Participation à la conception produit et aux choix techniques
 
 Carvivo - Développeuse web
-mai 2022 - septembre 2022 (5 mois) | Paris, Île-de-France, France
-TMA et ajout de nouvelles fonctionnalités sur l'outil de gestion des leads (Symfony, PHP, JS).
-Optimisation d'un outil de gestion de leads: correction de bugs et développement de nouvelles
-fonctionnalités
-Responsable des déploiements hebdomadaires via Github Actions et tests fonctionnels (Selenium)
-Implémentation multilingue (FR/EN) et intégration front-end responsive
-Collaboration en méthode agile avec points quotidiens et sprints bi-mensuels
-Technologies : Symfony2.8, PHP, JS, jQuery, HTML/CSS (Twig)
-Environnement : Jira, Github
+2022
+• TMA et évolutions produit sur outil SaaS
+• Déploiements, QA, amélioration continue
 
-MINDOZA - Développeur web
-Mai 2021 - Mai 2022 (1 an) | Paris, Île-de-France, France
-Développement web multi-projets PHP, JavaScript avec Symfony, VueJs, React, BackboneJs et WordPress.
-Développement backend des endpoints et nouvelles fonctionnalités
-Développement d'APIs REST et back-offices personnalisés selon méthodologie cycle en V
-Maintenance évolutives sur des projets utilisant diverses technologies (WordPress, Symfony, VueJS,
-CSML, BackboneJS)
-Implémentation d'environnements conteneurisés Docker pour projets Symfony
-Clients: Healthubby Alstom, Carl’s Jr, chatbots pour concours internes Eurosport pendant les JO de
-Tokyo et Beijing, templates email groupe Casino
+MINDOZA - Développeuse web
+2021 - 2022
+• Développement multi-projets (Symfony, React, WordPress)
+• APIs, back-offices, Docker
 
-Feedback Lawyers - Développeuse WEB
-juillet 2020 - septembre 2020 (3 mois) | Paris, Île-de-France, France
-Conception de l'interface web côté client pour chercher et trouver un avocat.
+Feedback Lawyers - Développeuse web
+2020
+• Interface de recherche d’avocats (React + API)
 
-Formation
-• Ecole O'clock - Spécialisation Symfony, certification Opquast (2021)
-• WebForce3 - Titre professionnel RNCP niveau 5 Développeur web et web mobile (2020)
+Expérience complémentaire
+• Formatrice : HTML, CSS et bases de Git pour des apprenantes chez Les DesCodeuses  
+• Intervention via Airskill (fondé par Frédéric Lossignol, mentor)
 
-Projets Récents
-• Chatbot Jessica IA - Assistant IA personnel avec notifications Pushover
-• Music Discovery AI - Application de découverte musicale avec IA
-• Préparateur aux entretiens - Outil de simulation d'entretiens avec IA
-• Solutions web diverses en PHP/Symfony et Python"""
+Projets récents
+• Assistant IA personnel (inspiré de “Her”) avec mémoire, voix et adaptation émotionnelle  
+• Application de préparation aux entretiens (IA)  
+• Music Discovery AI  
+• Projet cybersécurité grand public (diagnostic + assistant IA)  
+• Contributions produit et techniques sur la plateforme E-Motion (réservation, paiement, back-office, performance)
+
+Approche
+Je ne fais pas “juste du développement”.
+Je conçois des solutions utiles, durables et intelligentes — avec une vraie vision produit."""
 }
 
 # Initialisation du session state
