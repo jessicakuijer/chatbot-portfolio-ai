@@ -2,312 +2,133 @@ import streamlit as st
 import openai
 import requests
 import json
-import os
-from typing import List, Dict, Optional
+import re
 import time
-from pypdf import PdfReader  # Import ajouté
+from typing import Any, Dict, List, Optional
 
-# Configuration de la page
+from ui.copy import COPY, THEME_LABELS, session_to_ui_lang
+from ui.design_system import apply_styles
+from ui.render import (
+    render_assistant_bubble,
+    render_assistant_projects,
+    render_assistant_with_projects,
+    render_config_error,
+    render_contact_intro,
+    render_contact_success,
+    render_footer_links,
+    render_header_profile,
+    render_typing_indicator,
+    render_user_bubble,
+    render_welcome,
+)
+
+
+def rerun() -> None:
+    if hasattr(st, "rerun"):
+        st.rerun()
+    else:
+        st.experimental_rerun()
+
+
+def notify(message: str) -> None:
+    if hasattr(st, "toast"):
+        st.toast(message)
+    else:
+        st.info(message)
+
+
 st.set_page_config(
     page_title="Jessica Kuijer - Assistant IA",
     page_icon="🤖",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
     menu_items={
-        'Get Help': 'https://github.com/jessicakuijer/chatbot-portfolio',
-        'Report a bug': "https://github.com/jessicakuijer/chatbot-portfolio/issues",
-        'About': "# 🤖 Jessica Kuijer - Assistant IA\n\nAssistant IA personnel avec notifications temps réel"
-    }
+        "Get Help": "https://github.com/jessicakuijer/chatbot-portfolio",
+        "Report a bug": "https://github.com/jessicakuijer/chatbot-portfolio/issues",
+        "About": "# Jessica Kuijer - Assistant IA\n\nAssistant IA personnel avec notifications temps réel",
+    },
 )
 
-# Forcer le thème clair pour une meilleure lisibilité
-st.markdown("""
-<style>
-    /* Forcer le thème clair */
-    .stApp {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-    
-    /* S'assurer que le texte est lisible */
-    .stMarkdown, .stText, .stTextInput, .stTextArea {
-        color: #000000 !important;
-    }
-    
-    /* Forcer les couleurs de fond des messages */
-    .message-user {
-        background: linear-gradient(135deg, #667eea, #764ba2) !important;
-        color: white !important;
-    }
-    
-    .message-assistant {
-        background: #ffffff !important;
-        color: #000000 !important;
-        border: 1px solid #e0e0e0 !important;
-    }
-    
-    /* Améliorer la lisibilité des éléments Streamlit */
-    .stButton > button {
-        color: #000000 !important;
-        background-color: #f0f2f6 !important;
-        border: 1px solid #d0d0d0 !important;
-    }
-    
-    .stButton > button:hover {
-        background-color: #e0e2e6 !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+if not hasattr(openai, "OpenAI"):
+    st.error(
+        "Version incompatible du package `openai` (attendu ≥ 1.3). "
+        "Vous utilisez probablement le Python système au lieu du virtualenv du projet.\n\n"
+        "Arrêtez le serveur (Ctrl+C), puis lancez :\n\n"
+        "`.venv/bin/streamlit run app.py`"
+    )
+    st.stop()
 
-# CSS personnalisé unique
-st.markdown("""
-<style>
-    /* Forcer le thème clair global */
-    .stApp {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-    }
-    
-    /* En-tête principal — le fond violet reste, le texte passe sur panneau lisible */
-    .main-header {
-        background: linear-gradient(145deg, #4f46e5 0%, #6d28d9 45%, #5b21b6 100%);
-        padding: 2rem 1.25rem 2.25rem;
-        border-radius: 16px;
-        text-align: center;
-        margin-bottom: 2rem;
-        box-shadow: 0 12px 40px rgba(79, 70, 229, 0.28), 0 2px 8px rgba(0,0,0,0.08);
-        border: 1px solid rgba(255, 255, 255, 0.12);
-    }
-    .main-header-inner {
-        max-width: 42rem;
-        margin: 0 auto;
-        padding: 1.5rem 1.35rem;
-        background: rgba(255, 255, 255, 0.14);
-        border: 1px solid rgba(255, 255, 255, 0.28);
-        border-radius: 14px;
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    }
-    /* Priorité sur .stMarkdown h1/h3/p { color: #000 !important } */
-    .main-header .main-header-inner h1 {
-        font-size: clamp(1.35rem, 3.2vw, 1.9rem);
-        font-weight: 700;
-        letter-spacing: -0.03em;
-        line-height: 1.2;
-        margin: 0 0 0.65rem 0;
-        color: #ffffff !important;
-        text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
-    }
-    .main-header .main-header-inner h3 {
-        font-size: clamp(0.95rem, 2.1vw, 1.12rem);
-        font-weight: 500;
-        line-height: 1.45;
-        margin: 0 0 1rem 0;
-        color: #f1f5f9 !important;
-        text-shadow: 0 1px 10px rgba(0, 0, 0, 0.15);
-    }
-    .main-header .main-header-inner .main-header-lead {
-        margin: 0;
-        font-size: 1.02rem;
-        line-height: 1.55;
-        color: #e2e8f0 !important;
-        font-weight: 400;
-    }
-    .main-header-divider {
-        width: 3rem;
-        height: 3px;
-        margin: 0 auto 1rem;
-        border-radius: 999px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent);
-        opacity: 0.9;
-    }
-    
-    /* Conteneur de chat */
-    .chat-container {
-        background: #f8f9ff;
-        padding: 1.5rem;
-        border-radius: 15px;
-        margin: 1rem 0;
-        border-left: 4px solid #667eea;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        color: #000000;
-    }
-    
-    /* Cartes de notification */
-    .notification-card {
-        background: #e8f5e8;
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 4px solid #28a745;
-        margin: 1rem 0;
-        color: #155724;
-    }
-    
-    /* Messages utilisateur */
-    .message-user {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        color: white;
-        padding: 1rem;
-        border-radius: 15px;
-        margin: 0.5rem 0;
-        margin-left: 20%;
-        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-    }
-    
-    /* Messages assistant */
-    .message-assistant {
-        background: #ffffff;
-        padding: 1rem;
-        border-radius: 15px;
-        margin: 0.5rem 0;
-        margin-right: 20%;
-        border-left: 3px solid #667eea;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        color: #000000;
-        border: 1px solid #e0e0e0;
-    }
-    
-    /* Messages d'outils */
-    .message-tool {
-        background: #fff3cd;
-        padding: 0.5rem;
-        border-radius: 8px;
-        margin: 0.25rem 0;
-        border-left: 3px solid #ffc107;
-        font-size: 0.9rem;
-        font-style: italic;
-        color: #856404;
-    }
-    
-    /* Profil chargé */
-    .profile-loaded {
-        background: #d4edda;
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 4px solid #28a745;
-        margin: 1rem 0;
-        color: #155724;
-    }
-    
-    /* Boîtes d'erreur */
-    .error-box {
-        background: #f8d7da;
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 4px solid #dc3545;
-        margin: 1rem 0;
-        color: #721c24;
-    }
-    
-    /* Boîtes de succès */
-    .success-box {
-        background: #d1ecf1;
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 4px solid #17a2b8;
-        margin: 1rem 0;
-        color: #0c5460;
-    }
-    
-    /* Améliorer la lisibilité des éléments Streamlit */
-    .stMarkdown, .stText, .stTextInput, .stTextArea {
-        color: #000000 !important;
-    }
-    
-    .stButton > button {
-        color: #000000 !important;
-        background-color: #f0f2f6 !important;
-        border: 1px solid #d0d0d0 !important;
-    }
-    
-    .stButton > button:hover {
-        background-color: #e0e2e6 !important;
-    }
-    
-    /* Forcer les couleurs de fond */
-    .stApp > div:first-child {
-        background-color: #ffffff !important;
-    }
-    
-    /* Améliorer la sidebar */
-    .css-1d391kg {
-        background-color: #f8f9fa !important;
-    }
-    
-    /* Texte markdown en noir (sauf le hero : règles .main-header .main-header-inner plus spécifiques) */
-    .stMarkdown p, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4 {
-        color: #000000 !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+PROJECT_RE = re.compile(r"(projet|project|r[ée]alis|portfolio|construit|built|vignette)", re.I)
+CONTACT_RE = re.compile(
+    r"(disponib|dispo|available|recrut|embauch|opportun|contact|email|mail|hire|collabor|joindre|reach|coordonn)",
+    re.I,
+)
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
-# Données de Jessica - VERSION PUBLIQUE
 JESSICA_PROFILE = {
     "name": "Jessica Kuijer",
-    "summary": """Je suis Jessica Kuijer, développeuse backend PHP / Python devenue product builder orientée IA. J’aime transformer des idées en produits concrets, utiles et robustes. Originaire de la région parisienne, je vis aujourd’hui en Seine-et-Marne pour un meilleur équilibre entre vie pro et perso (et plus de nature). Je m’intéresse autant à la technique qu’au produit, aux usages et à la valeur réelle pour les utilisateurs. J’intègre l’IA (OpenAI, automatisation, logique métier augmentée) quand elle fait sens — pas juste pour suivre une tendance. Actuellement, je suis ouverte à de nouveaux challenges où je peux allier backend, produit et IA. Mélomane (batterie, concerts, artistes), j’aime aussi partager cette énergie dans ce que je construis. Et détail important : je suis allergique aux kiwis 😄""",
-    
+    "summary": """Je suis Jessica Kuijer, développeuse backend PHP / Python devenue product builder orientée IA. J'aime transformer des idées en produits concrets, utiles et robustes. Originaire de la région parisienne, je vis aujourd'hui en Seine-et-Marne pour un meilleur équilibre entre vie pro et perso (et plus de nature). Je m'intéresse autant à la technique qu'au produit, aux usages et à la valeur réelle pour les utilisateurs. J'intègre l'IA (OpenAI, automatisation, logique métier augmentée) quand elle fait sens — pas juste pour suivre une tendance. Actuellement, je suis ouverte à de nouveaux challenges où je peux allier backend, produit et IA. Mélomane (batterie, concerts, artistes), j'aime aussi partager cette énergie dans ce que je construis. Et détail important : je suis allergique aux kiwis 😄""",
     "linkedin_text": """Jessica Kuijer ♀
 Développeuse web backend PHP / Python • Product-minded • Intégration IA
 Seine-et-Marne, Île-de-France, France
 
 Résumé
 Je transforme des idées en produits web concrets, robustes… et utiles.
-Développeuse backend PHP / Python, je conçois des solutions modernes en allant au-delà du code : je m’intéresse au produit, aux usages, et à la valeur réelle pour les utilisateurs.
+Développeuse backend PHP / Python, je conçois des solutions modernes en allant au-delà du code : je m'intéresse au produit, aux usages, et à la valeur réelle pour les utilisateurs.
 
-Aujourd’hui, j’intègre des briques d’IA (OpenAI, automatisation, logique métier augmentée) pour créer des expériences plus intelligentes et efficaces — pas “parce que c’est tendance”, mais parce que ça apporte une vraie valeur.
+Aujourd'hui, j'intègre des briques d'IA (OpenAI, automatisation, logique métier augmentée) pour créer des expériences plus intelligentes et efficaces — pas "parce que c'est tendance", mais parce que ça apporte une vraie valeur.
 
-Actuellement, je suis à la recherche d’un nouveau challenge me permettant d’allier backend, vision produit et intégration de l’IA.
+Actuellement, je suis à la recherche d'un nouveau challenge me permettant d'allier backend, vision produit et intégration de l'IA.
 
 Ce qui me drive :
-→ comprendre rapidement un contexte métier  
-→ structurer des solutions simples à partir de problématiques complexes  
-→ livrer des outils fiables, maintenables et évolutifs  
+→ comprendre rapidement un contexte métier
+→ structurer des solutions simples à partir de problématiques complexes
+→ livrer des outils fiables, maintenables et évolutifs
 
-Autodidacte, directe, engagée — j’aime faire avancer les projets et les équipes.
+Autodidacte, directe, engagée — j'aime faire avancer les projets et les équipes.
 
-Je suis également mélomane (batterie, concerts, artistes) et j’aime partager cette passion.
+Je suis également mélomane (batterie, concerts, artistes) et j'aime partager cette passion.
 
 Mobilité géographique :
 • Île-de-France (déplacements possibles)
 • Remote / hybride
 
 Principales compétences
-• PHP (Symfony), Python  
-• Architecture backend, API REST, API Platform  
-• SQL / PostgreSQL / MySQL / Elasticsearch  
-• Monorepo (Turborepo), Docker, CI/CD  
-• Stripe (paiement, SCA), WebSockets  
-• IA appliquée (OpenAI, automatisation, logique métier augmentée)  
-• Performance backend, optimisation de requêtes  
-• Approche produit & UX backend  
+• PHP (Symfony), Python
+• Architecture backend, API REST, API Platform
+• SQL / PostgreSQL / MySQL / Elasticsearch
+• Monorepo (Turborepo), Docker, CI/CD
+• Stripe (paiement, SCA), WebSockets
+• IA appliquée (OpenAI, automatisation, logique métier augmentée)
+• Performance backend, optimisation de requêtes
+• Approche produit & UX backend
 
 Technologies complémentaires
-• JavaScript, React, VueJS  
-• Git, GitHub, GitLab  
-• Méthodologies Agile, Scrum  
+• JavaScript, React, VueJS
+• Git, GitHub, GitLab
+• Méthodologies Agile, Scrum
 
 Ce que je peux rapidement monter en compétences
-• Cloud (AWS, GCP), Kubernetes  
-• Terraform, DevOps avancé  
-• GraphQL  
+• Cloud (AWS, GCP), Kubernetes
+• Terraform, DevOps avancé
+• GraphQL
 
 Langues
-• Français (langue maternelle)  
+• Français (langue maternelle)
 • Anglais (professionnel)
 
 Certifications & formations
-• Certification OPQUAST - Qualité Web  
-• The Complete Agentic AI Engineering Course (2025)  
-• Scrum Developer (Sia)  
-• MOOC #WomenInDigital  
-• Fresque du Climat  
+• Certification OPQUAST - Qualité Web
+• The Complete Agentic AI Engineering Course (2025)
+• Scrum Developer (Sia)
+• MOOC #WomenInDigital
+• Fresque du Climat
 
 Expérience Professionnelle
 
 Expériences récentes
 Développeuse web backend / Product-oriented
-2021 - aujourd’hui
+2021 - aujourd'hui
 • Conception et développement de solutions web (PHP, Python)
 • Intégration de briques IA dans des produits existants
 • Approche orientée produit et valeur utilisateur
@@ -331,121 +152,80 @@ MINDOZA - Développeuse web
 
 Feedback Lawyers - Développeuse web
 2020
-• Interface de recherche d’avocats (React + API)
+• Interface de recherche d'avocats (React + API)
 
 Expérience complémentaire
-• Formatrice : HTML, CSS et bases de Git pour des apprenantes chez Les DesCodeuses  
+• Formatrice : HTML, CSS et bases de Git pour des apprenantes chez Les DesCodeuses
 • Intervention via Airskill (fondé par Frédéric Lossignol, mentor)
 
 Projets récents
-• Assistant IA personnel (inspiré de “Her”) avec mémoire, voix et adaptation émotionnelle  
-• Application de préparation aux entretiens (IA)  
-• Music Discovery AI  
-• Projet cybersécurité grand public (diagnostic + assistant IA)  
+• Assistant IA personnel (inspiré de "Her") avec mémoire, voix et adaptation émotionnelle
+• Application de préparation aux entretiens (IA)
+• Music Discovery AI
+• Projet cybersécurité grand public (diagnostic + assistant IA)
 • Contributions produit et techniques sur la plateforme E-Motion (réservation, paiement, back-office, performance)
 
 Approche
-Je ne fais pas “juste du développement”.
-Je conçois des solutions utiles, durables et intelligentes — avec une vraie vision produit."""
+Je ne fais pas "juste du développement".
+Je conçois des solutions utiles, durables et intelligentes — avec une vraie vision produit.""",
 }
 
-# Initialisation du session state
-if 'chat_history' not in st.session_state:
+if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
-if 'notification_count' not in st.session_state:
+if "notification_count" not in st.session_state:
     st.session_state.notification_count = 0
-if 'contact_count' not in st.session_state:
+if "contact_count" not in st.session_state:
     st.session_state.contact_count = 0
-if 'current_language' not in st.session_state:
+if "current_language" not in st.session_state:
     st.session_state.current_language = "french"
-if 'is_processing' not in st.session_state:
+if "is_processing" not in st.session_state:
     st.session_state.is_processing = False
+if "last_error" not in st.session_state:
+    st.session_state.last_error = None
+if "theme" not in st.session_state:
+    st.session_state.theme = "clair"
 
-def send_pushover_notification(message: str, pushover_user: str, pushover_token: str):
-    """Envoie une notification Pushover avec gestion d'erreurs améliorée"""
-    if not pushover_user or not pushover_token:
-        return False
-        
-    try:
-        payload = {
-            "user": pushover_user,
-            "token": pushover_token,
-            "message": message,
-            "title": "🤖 Jessica Kuijer - Assistant IA",
-            "priority": 0,
-            "sound": "pushover"
-        }
-        response = requests.post("https://api.pushover.net/1/messages.json", data=payload, timeout=10)
-        
-        if response.status_code == 200:
-            st.session_state.notification_count += 1
-            return True
-        else:
-            st.error(f"Erreur Pushover: {response.status_code} - {response.text}")
-            return False
-            
-    except requests.exceptions.Timeout:
-        st.error("Timeout lors de l'envoi de la notification Pushover")
-        return False
-    except Exception as e:
-        st.error(f"Erreur Pushover : {str(e)}")
-        return False
 
-def record_user_details(email: str, name: str = "Nom non fourni", phone: str = "Non fourni", notes: str = "Aucune note"):
-    """Enregistre les détails d'un utilisateur intéressé"""
-    pushover_user = st.session_state.get('pushover_user')
-    pushover_token = st.session_state.get('pushover_token')
-    
-    # Formater le message avec le téléphone si fourni
-    phone_info = f"📱 Téléphone: {phone}" if phone and phone != "Non fourni" else "📱 Téléphone: Non fourni"
-    
-    message = f"""📧 NOUVEAU CONTACT pour Jessica !
+def get_openai_model() -> str:
+    return st.secrets.get("OPENAI_MODEL", "gpt-5-mini")
 
-👤 Nom: {name}
-📧 Email: {email}
-{phone_info}
-📝 Notes: {notes}
 
-🌐 Via: Jessica Kuijer Assistant IA
-⏰ {time.strftime('%d/%m/%Y à %H:%M')}"""
-    
-    if pushover_user and pushover_token:
-        success = send_pushover_notification(message, pushover_user, pushover_token)
-        if success:
-            st.session_state.contact_count += 1
-            st.success("✅ Jessica sera notifiée sur son téléphone !")
-            return {"recorded": "ok", "message": "Contact enregistré avec succès"}
-        else:
-            st.warning("⚠️ Contact enregistré mais notification échouée")
-            return {"recorded": "partial", "message": "Contact enregistré, notification échouée"}
-    else:
-        st.info("💾 Contact enregistré (pas de notification configurée)")
-        return {"recorded": "ok", "message": "Contact enregistré localement"}
+def model_supports_temperature(model: str) -> bool:
+    return not model.startswith("gpt-5")
 
-def record_unknown_question(question: str):
-    """Enregistre une question à laquelle l'IA n'a pas pu répondre"""
-    pushover_user = st.session_state.get('pushover_user')
-    pushover_token = st.session_state.get('pushover_token')
-    
-    message = f"""❓ QUESTION NON RÉSOLUE pour Jessica !
 
-🤔 Question: {question}
+def build_api_messages(history: List[Dict]) -> List[Dict]:
+    """Strip UI-only fields before sending history to OpenAI."""
+    return [
+        {"role": m["role"], "content": m["content"]}
+        for m in history
+        if m.get("role") in ("user", "assistant") and m.get("content")
+    ]
 
-💡 Suggestion: Jessica devrait enrichir son profil avec cette information.
 
-🌐 Via: Jessica Kuijer Assistant IA
-⏰ {time.strftime('%d/%m/%Y à %H:%M')}"""
-    
-    if pushover_user and pushover_token:
-        success = send_pushover_notification(message, pushover_user, pushover_token)
-        if success:
-            st.info("📱 Jessica sera notifiée pour améliorer son profil")
-        return {"recorded": "ok", "message": "Question enregistrée pour amélioration"}
-    else:
-        st.info("💾 Question enregistrée localement")
-        return {"recorded": "ok", "message": "Question enregistrée localement"}
+def assistant_message_to_dict(message) -> Dict[str, Any]:
+    payload: Dict[str, Any] = {"role": "assistant", "content": message.content or ""}
+    if message.tool_calls:
+        payload["tool_calls"] = [
+            {
+                "id": tc.id,
+                "type": tc.type,
+                "function": {"name": tc.function.name, "arguments": tc.function.arguments},
+            }
+            for tc in message.tool_calls
+        ]
+    return payload
 
-# Définition des tools OpenAI
+
+def create_chat_completion(client, messages: List[Dict], *, tools=None, temperature: float = 0.7):
+    model = get_openai_model()
+    params: Dict[str, Any] = {"model": model, "messages": messages}
+    if tools is not None:
+        params["tools"] = tools
+    if model_supports_temperature(model):
+        params["temperature"] = temperature
+    return client.chat.completions.create(**params)
+
 tools = [
     {
         "type": "function",
@@ -455,27 +235,18 @@ tools = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "email": {
-                        "type": "string",
-                        "description": "L'adresse email de l'utilisateur"
-                    },
-                    "name": {
-                        "type": "string",
-                        "description": "Le nom de l'utilisateur, s'il l'a fourni"
-                    },
-                    "phone": {
-                        "type": "string",
-                        "description": "Le numéro de téléphone de l'utilisateur, s'il l'a fourni"
-                    },
+                    "email": {"type": "string", "description": "L'adresse email de l'utilisateur"},
+                    "name": {"type": "string", "description": "Le nom de l'utilisateur, s'il l'a fourni"},
+                    "phone": {"type": "string", "description": "Le numéro de téléphone de l'utilisateur, s'il l'a fourni"},
                     "notes": {
                         "type": "string",
-                        "description": "Informations importantes: type de projet, budget, timeline, compétences recherchées, etc."
-                    }
+                        "description": "Informations importantes: type de projet, budget, timeline, compétences recherchées, etc.",
+                    },
                 },
                 "required": ["email"],
-                "additionalProperties": False
-            }
-        }
+                "additionalProperties": False,
+            },
+        },
     },
     {
         "type": "function",
@@ -485,59 +256,139 @@ tools = [
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "question": {
-                        "type": "string",
-                        "description": "La question à laquelle tu n'as pas pu répondre"
-                    }
+                    "question": {"type": "string", "description": "La question à laquelle tu n'as pas pu répondre"}
                 },
                 "required": ["question"],
-                "additionalProperties": False
-            }
-        }
-    }
+                "additionalProperties": False,
+            },
+        },
+    },
 ]
 
+
+def is_projects_query(text: str) -> bool:
+    return bool(PROJECT_RE.search(text or ""))
+
+
+def is_contact_query(text: str) -> bool:
+    return bool(CONTACT_RE.search(text or "")) and not re.search(r"kiwi", text or "", re.I)
+
+
+def send_pushover_notification(message: str, pushover_user: str, pushover_token: str) -> bool:
+    if not pushover_user or not pushover_token:
+        return False
+    try:
+        payload = {
+            "user": pushover_user,
+            "token": pushover_token,
+            "message": message,
+            "title": "🤖 Jessica Kuijer - Assistant IA",
+            "priority": 0,
+            "sound": "pushover",
+        }
+        response = requests.post("https://api.pushover.net/1/messages.json", data=payload, timeout=10)
+        if response.status_code == 200:
+            st.session_state.notification_count += 1
+            return True
+        if st.session_state.get("_show_pushover_ui", True):
+            st.error(f"Erreur Pushover: {response.status_code} - {response.text}")
+        return False
+    except requests.exceptions.Timeout:
+        if st.session_state.get("_show_pushover_ui", True):
+            st.error("Timeout lors de l'envoi de la notification Pushover")
+        return False
+    except Exception as e:
+        if st.session_state.get("_show_pushover_ui", True):
+            st.error(f"Erreur Pushover : {str(e)}")
+        return False
+
+
+def record_user_details(
+    email: str,
+    name: str = "Nom non fourni",
+    phone: str = "Non fourni",
+    notes: str = "Aucune note",
+    show_ui: bool = True,
+):
+    pushover_user = st.session_state.get("pushover_user")
+    pushover_token = st.session_state.get("pushover_token")
+    phone_info = f"📱 Téléphone: {phone}" if phone and phone != "Non fourni" else "📱 Téléphone: Non fourni"
+    message = f"""📧 NOUVEAU CONTACT pour Jessica !
+
+👤 Nom: {name}
+📧 Email: {email}
+{phone_info}
+📝 Notes: {notes}
+
+🌐 Via: Jessica Kuijer Assistant IA
+⏰ {time.strftime('%d/%m/%Y à %H:%M')}"""
+    if pushover_user and pushover_token:
+        st.session_state._show_pushover_ui = show_ui
+        success = send_pushover_notification(message, pushover_user, pushover_token)
+        st.session_state._show_pushover_ui = True
+        if success:
+            st.session_state.contact_count += 1
+            if show_ui:
+                st.success("✅ Jessica sera notifiée sur son téléphone !")
+            return {"recorded": "ok", "message": "Contact enregistré avec succès"}
+        if show_ui:
+            st.warning("⚠️ Contact enregistré mais notification échouée")
+        return {"recorded": "partial", "message": "Contact enregistré, notification échouée"}
+    if show_ui:
+        st.info("💾 Contact enregistré (pas de notification configurée)")
+    return {"recorded": "ok", "message": "Contact enregistré localement"}
+
+
+def record_unknown_question(question: str):
+    pushover_user = st.session_state.get("pushover_user")
+    pushover_token = st.session_state.get("pushover_token")
+    message = f"""❓ QUESTION NON RÉSOLUE pour Jessica !
+
+🤔 Question: {question}
+
+💡 Suggestion: Jessica devrait enrichir son profil avec cette information.
+
+🌐 Via: Jessica Kuijer Assistant IA
+⏰ {time.strftime('%d/%m/%Y à %H:%M')}"""
+    if pushover_user and pushover_token:
+        success = send_pushover_notification(message, pushover_user, pushover_token)
+        if success and st.session_state.get("_show_pushover_ui", True):
+            st.info("📱 Jessica sera notifiée pour améliorer son profil")
+        return {"recorded": "ok", "message": "Question enregistrée pour amélioration"}
+    if st.session_state.get("_show_pushover_ui", True):
+        st.info("💾 Question enregistrée localement")
+    return {"recorded": "ok", "message": "Question enregistrée localement"}
+
+
 def handle_tool_calls(tool_calls):
-    """Gère les appels d'outils de l'IA avec gestion d'erreurs"""
     results = []
     for tool_call in tool_calls:
         try:
             tool_name = tool_call.function.name
             arguments = json.loads(tool_call.function.arguments)
-            
-            # Dispatch des fonctions
             if tool_name == "record_user_details":
-                result = record_user_details(**arguments)
-                # Message informatif pour l'IA
-                result["message_for_ai"] = "Contact enregistré avec succès. Vous pouvez maintenant répondre à la question de l'utilisateur."
+                result = record_user_details(**arguments, show_ui=False)
+                result["message_for_ai"] = (
+                    "Contact enregistré avec succès. Vous pouvez maintenant répondre à la question de l'utilisateur."
+                )
             elif tool_name == "record_unknown_question":
                 result = record_unknown_question(**arguments)
-                # Message informatif pour l'IA
-                result["message_for_ai"] = "Question enregistrée pour amélioration. Expliquez poliment que vous n'avez pas cette information mais que vous l'avez notée."
+                result["message_for_ai"] = (
+                    "Question enregistrée pour amélioration. Expliquez poliment que vous n'avez pas cette information mais que vous l'avez notée."
+                )
             else:
                 result = {"error": f"Outil {tool_name} non reconnu"}
-            
-            # Créer le message d'outil avec le bon format OpenAI
-            results.append({
-                "role": "tool",
-                "content": json.dumps(result),
-                "tool_call_id": tool_call.id
-            })
-            
+            results.append({"role": "tool", "content": json.dumps(result), "tool_call_id": tool_call.id})
         except Exception as e:
             st.error(f"Erreur dans l'exécution de l'outil {tool_call.function.name}: {str(e)}")
-            results.append({
-                "role": "tool",
-                "content": json.dumps({"error": str(e)}),
-                "tool_call_id": tool_call.id
-            })
-    
+            results.append(
+                {"role": "tool", "content": json.dumps({"error": str(e)}), "tool_call_id": tool_call.id}
+            )
     return results
 
+
 def translate_profile_to_english(profile: dict, openai_client) -> dict:
-    """Traduit le profil Jessica en anglais en utilisant l'API OpenAI"""
     try:
-        # Préparer le texte à traduire
         text_to_translate = f"""
 Nom: {profile['name']}
 Résumé: {profile['summary']}
@@ -545,66 +396,39 @@ Résumé: {profile['summary']}
 Profil LinkedIn:
 {profile['linkedin_text']}
         """.strip()
-        
-        # Demander la traduction à OpenAI
-        response = openai_client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
+        response = create_chat_completion(
+            openai_client,
+            [
                 {
-                    "role": "system", 
-                    "content": "Tu es un traducteur professionnel français-anglais. Traduis le profil de Jessica Kuijer en anglais en gardant le style professionnel et authentique. IMPORTANT: Traduis aussi les prétentions salariales en anglais (Salary expectations: 45000€ brut per year). Retourne la traduction au format JSON avec les clés 'name', 'summary', et 'linkedin_text'."
+                    "role": "system",
+                    "content": (
+                        "Tu es un traducteur professionnel français-anglais. Traduis le profil de Jessica Kuijer "
+                        "en anglais en gardant le style professionnel et authentique. Retourne la traduction au "
+                        "format JSON avec les clés 'name', 'summary', et 'linkedin_text'."
+                    ),
                 },
-                {
-                    "role": "user",
-                    "content": f"Traduis ce profil en anglais: {text_to_translate}"
-                }
+                {"role": "user", "content": f"Traduis ce profil en anglais: {text_to_translate}"},
             ],
-            temperature=0.3
+            temperature=0.3,
         )
-        
-        # Parser la réponse JSON
-        try:
-            translated_content = response.choices[0].message.content
-            # Essayer de parser le JSON directement
-            if translated_content.strip().startswith('{'):
-                translated_profile = json.loads(translated_content)
-            else:
-                # Si ce n'est pas du JSON valide, essayer d'extraire les parties
-                translated_profile = {
-                    "name": profile['name'],
-                    "summary": translated_content,
-                    "linkedin_text": translated_content
-                }
-            
-            return translated_profile
-        except json.JSONDecodeError:
-            # Fallback si le parsing JSON échoue
-            return {
-                "name": profile['name'],
-                "summary": translated_content,
-                "linkedin_text": translated_content
-            }
-            
+        translated_content = response.choices[0].message.content
+        if translated_content.strip().startswith("{"):
+            return json.loads(translated_content)
+        return {"name": profile["name"], "summary": translated_content, "linkedin_text": translated_content}
     except Exception as e:
         st.error(f"Erreur lors de la traduction: {str(e)}")
-        # Retourner le profil original en cas d'erreur
         return profile
 
+
 def create_system_prompt(language: str = "french", openai_client=None) -> str:
-    """Crée le prompt système pour Jessica dans la langue demandée"""
     profile = JESSICA_PROFILE
     contact_linkedin = st.secrets.get("CONTACT_LINKEDIN", "https://www.linkedin.com/in/jessicakuijer/")
-    
     if language == "english":
-        # Si on a un client OpenAI, on peut traduire le profil dynamiquement
         if openai_client:
             try:
-                translated_profile = translate_profile_to_english(profile, openai_client)
-                profile = translated_profile
+                profile = translate_profile_to_english(profile, openai_client)
             except Exception as e:
                 st.warning(f"⚠️ Impossible de traduire le profil en anglais: {str(e)}")
-                # Continuer avec le profil original
-        
         return f"""You are Jessica Kuijer, a backend web developer specialized in PHP (Symfony) and Python, evolving into a product-oriented AI builder. You represent Jessica on her personal website and answer questions about her career, skills, and experience.
 
 IMPORTANT INSTRUCTIONS:
@@ -640,10 +464,8 @@ RECENT PROJECTS TO MENTION:
 - Various web and AI-powered solutions in PHP/Symfony and Python for clients
 
 With this context, discuss naturally with the user while remaining Jessica Kuijer. Be authentic, product-driven, and focused on creating meaningful impact."""
-    
-    else:
-        # Prompt en français (par défaut)
-        return f"""Tu es Jessica Kuijer, développeuse web backend spécialisée en PHP (Symfony) et Python, en évolution vers un rôle de product builder orienté IA. Tu représentes Jessica sur son site web personnel et tu réponds aux questions concernant sa carrière, ses compétences et son expérience.
+
+    return f"""Tu es Jessica Kuijer, développeuse web backend spécialisée en PHP (Symfony) et Python, en évolution vers un rôle de product builder orienté IA. Tu représentes Jessica sur son site web personnel et tu réponds aux questions concernant sa carrière, ses compétences et son expérience.
 
 INSTRUCTIONS IMPORTANTES :
 - Tu ES Jessica Kuijer, parle à la première personne ("Je suis", "Mon expérience", "Mes compétences")
@@ -653,9 +475,9 @@ INSTRUCTIONS IMPORTANTES :
 - Si l'utilisateur semble intéressé par une collaboration ou laisse son email, utilise record_user_details, puis continue à répondre à sa question ou demande plus de détails sur son projet
 - Si l'utilisateur semble avoir un poste à pourvoir ou me parler d'un projet, alors demande lui son email, son téléphone (si possible) et des informations sur le poste ou le projet, utilise record_user_details, puis continue la conversation sur l'opportunité
 - IMPORTANT : Après avoir utilisé un outil, CONTINUE TOUJOURS la conversation naturellement - ne t'arrête pas là !
-- Mets en avant ton évolution de développeuse vers product builder, ta capacité à concevoir des solutions utiles et ton usage de l’IA quand elle apporte une vraie valeur
+- Mets en avant ton évolution de développeuse vers product builder, ta capacité à concevoir des solutions utiles et ton usage de l'IA quand elle apporte une vraie valeur
 - N'hésite pas à mentionner ton intérêt pour la cybersécurité, la protection des utilisateurs, et ton aversion pour les kiwis si c'est pertinent !
-- IMPORTANT : Ne dis JAMAIS que tu es freelance ou indépendante. Si on te pose la question sur ta situation actuelle, réponds que tu es à l’écoute de nouvelles opportunités ou en recherche de nouveaux challenges, sans mentionner de statut freelance.
+- IMPORTANT : Ne dis JAMAIS que tu es freelance ou indépendante. Si on te pose la question sur ta situation actuelle, réponds que tu es à l'écoute de nouvelles opportunités ou en recherche de nouveaux challenges, sans mentionner de statut freelance.
 
 CONTACT PROFESSIONNEL :
 - Email professionnel : {contact_linkedin}
@@ -678,336 +500,304 @@ PROJETS RÉCENTS À MENTIONNER :
 - Expérience de formation : cours HTML, CSS et bases de Git pour des apprenantes chez "Les DesCodeuses", via Airskill (fondé par Frédéric Lossignol)
 - Diverses solutions web et IA en PHP/Symfony et Python pour mes clients
 
-Avec ce contexte, discute naturellement avec l'utilisateur en restant Jessica Kuijer. Sois authentique, orientée produit et tournée vers l’impact."""
+Avec ce contexte, discute naturellement avec l'utilisateur en restant Jessica Kuijer. Sois authentique, orientée produit et tournée vers l'impact."""
 
-# En-tête principal
-st.markdown("""
-<div class="main-header">
-    <div class="main-header-inner">
-        <h1>🤖 Jessica Kuijer — Assistant IA</h1>
-        <h3>Votre représentante virtuelle intelligente avec notifications temps réel</h3>
-        <div class="main-header-divider" aria-hidden="true"></div>
-        <p class="main-header-lead">Discutez avec moi de mon parcours, mes compétences et mes projets !</p>
-    </div>
-</div>
-""", unsafe_allow_html=True)
 
-# Sidebar pour informations et configuration
-with st.sidebar:
-    st.header("👋 À Propos")
-    
-    # Affichage du profil
-    st.markdown(f"""
-    <div class="profile-loaded">
-        <h4>✅ {JESSICA_PROFILE['name']}</h4>
-        <p><strong>Poste :</strong> Développeuse Backend PHP/Python • Product builder orientée IA</p>
-        <p><strong>Localisation :</strong> Seine-et-Marne, France</p>
-        <p><strong>Spécialisations :</strong> Symfony, Python, API, IA appliquée, architecture backend</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Indicateur de langue actuelle
-    current_lang = st.session_state.get('current_language', 'french')
-    lang_emoji = "🇫🇷" if current_lang == "french" else "🇬🇧"
-    lang_text = "Français" if current_lang == "french" else "English"
-    
-    st.markdown(f"""
-    <div class="notification-card">
-        <h4>{lang_emoji} Langue actuelle : {lang_text}</h4>
-        <p><small>Dites "parle anglais" ou "speak english" pour changer</small></p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Configuration automatique des secrets
-    try:
-        openai_api_key = st.secrets["OPENAI_API_KEY"]
-        pushover_user = st.secrets["PUSHOVER_USER"]
-        pushover_token = st.secrets["PUSHOVER_TOKEN"]
-        
-        st.session_state.pushover_user = pushover_user
-        st.session_state.pushover_token = pushover_token
-        
-        secrets_loaded = True
-        st.markdown("""
-        <div class="success-box">
-            <h4>🤖 Assistant IA prêt !</h4>
-            <p>Configuration chargée depuis les secrets</p>
-        </div>
-        """, unsafe_allow_html=True)
-    except KeyError as e:
-        openai_api_key = ""
-        pushover_user = ""
-        pushover_token = ""
-        secrets_loaded = False
-        st.markdown(f"""
-        <div class="error-box">
-            <h4>⚠️ Configuration manquante</h4>
-            <p>Secret manquant: {str(e)}</p>
-            <p>Vérifiez votre fichier secrets.toml</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Test de notification - DÉSACTIVÉ TEMPORAIREMENT
-    # if secrets_loaded and st.button("📱 Tester Notification"):
-    #     with st.spinner("Envoi du test..."):
-    #         success = send_pushover_notification(
-    #             "🤖 Test de votre assistant Jessica IA ! Ça marche parfaitement !", 
-    #             pushover_user, 
-    #             pushover_token
-    #         )
-    #         if success:
-    #             st.success("✅ Notification test envoyée !")
-    #         else:
-    #             st.error("❌ Échec du test de notification")
-    
-    st.markdown("---")
-    
-    # Changement de langue manuel
-    st.subheader("🌐 Langue")
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("🇫🇷 Français", use_container_width=True):
-            st.session_state.current_language = "french"
-            st.rerun()
-    with col2:
-        if st.button("🇬🇧 English", use_container_width=True):
-            st.session_state.current_language = "english"
-            st.rerun()
-    
-    st.markdown("---")
-    
-    # Statistiques
-    st.subheader("📊 Statistiques")
-    st.metric("Messages échangés", len(st.session_state.chat_history))
-    st.metric("Contacts capturés", st.session_state.contact_count)
-    st.metric("Notifications envoyées", st.session_state.notification_count)
-    
-    st.markdown("---")
-    
-    # Instructions pour visiteurs
-    st.subheader("💬 Comment discuter")
-    st.markdown("""
-    🤖 **Posez-moi vos questions sur :**
-    - Mon parcours et expériences
-    - Mes compétences techniques  
-    - Mes projets récents
-    - Mes disponibilités
-    
-    💡 **Laissez votre email** si vous souhaitez me contacter directement !
-    
-    🎵 **Fun fact :** J'adore la musique mais je déteste les kiwis ! 🥝❌
-    """)
-    
-    st.markdown("---")
-    
-    # Projets récents
-    st.subheader("🚀 Mes Derniers Projets")
-    st.markdown("""
-    **🎵 Music Discovery AI**  
-    IA de découverte musicale (Spotify + OpenAI + YouTube)
-    
-    **🎯 Préparateur d'Entretiens**  
-    Simulation d'entretiens avec évaluation IA
-    
-    **🤖 Ce Chatbot**  
-    Assistant personnel avec notifications Pushover
-    """)
+def detect_language_switch(text: str) -> Optional[str]:
+    english_keywords = [
+        "english", "anglais", "speak english", "parle anglais", "réponds en anglais",
+        "can you speak english", "peux-tu parler anglais", "in english", "en anglais",
+        "switch to english", "passe en anglais", "change language", "change de langue",
+    ]
+    french_keywords = [
+        "french", "français", "speak french", "parle français", "réponds en français",
+        "can you speak french", "peux-tu parler français", "en français", "switch to french",
+    ]
+    lower = text.lower()
+    if any(k in lower for k in english_keywords):
+        return "english"
+    if any(k in lower for k in french_keywords):
+        return "french"
+    return None
 
-# Zone principale - Interface de chat
-if not secrets_loaded:
-    # Message d'erreur si pas de configuration
-    st.markdown("""
-    <div class="error-box">
-        <h3>⚠️ Configuration Requise</h3>
-        <p>L'assistant IA de Jessica n'est pas encore configuré. Les clés API doivent être ajoutées aux secrets Streamlit.</p>
-        <p><strong>Secrets requis :</strong></p>
-        <ul>
-            <li>OPENAI_API_KEY</li>
-            <li>PUSHOVER_USER</li>
-            <li>PUSHOVER_TOKEN</li>
-            <li>CONTACT_LINKEDIN (optionnel)</li>
-        </ul>
-        <p>En attendant, vous pouvez me contacter directement à <strong>jessicakuijer@me.com</strong></p>
-    </div>
-    """, unsafe_allow_html=True)
 
-else:
-    # Interface de chat opérationnelle
-    st.markdown("## 💬 Discutez avec Jessica Kuijer")
-    
-    # Message d'accueil si pas d'historique
-    if len(st.session_state.chat_history) == 0:
-        st.markdown("""
-        <div class="chat-container">
-            <h4>👋 Bonjour ! Je suis Jessica Kuijer</h4>
-            <p>Développeuse Backend PHP/Python devenue product builder orientée IA, je serais ravie d’échanger avec vous !</p>
-            <p>🤔 <strong>Vous pouvez me demander :</strong></p>
-            <ul>
-                <li>Mon parcours de reconversion depuis l'hôtellerie vers la tech</li>
-                <li>Mes compétences en PHP, Python, Symfony et architecture backend</li>
-                <li>Mes projets récents (Assistant IA, Music Discovery AI, cybersécurité, etc.)</li>
-                <li>Les opportunités ou projets sur lesquels je pourrais apporter de la valeur</li>
-            </ul>
-            <p>💡 Si vous avez un projet ou une opportunité, n'hésitez pas à me laisser votre email et votre téléphone ! 😊</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Affichage de l'historique de chat
-    chat_container = st.container()
-    with chat_container:
-        for message in st.session_state.chat_history:
-            if message["role"] == "user":
-                st.markdown(f'<div class="message-user"><strong>Visiteur :</strong> {message["content"]}</div>', unsafe_allow_html=True)
-            elif message["role"] == "assistant":
-                st.markdown(f'<div class="message-assistant"><strong>Jessica :</strong> {message["content"]}</div>', unsafe_allow_html=True)
-            # Les messages d'outils ne sont plus affichés car ils ne sont plus dans l'historique visible
-    
-    # Zone de saisie
-    with st.form(key="chat_form", clear_on_submit=True):
-        user_input = st.text_area(
-            "## 💬 Tapez votre message ci-dessous :", 
-            height=120, 
-            placeholder="Votre message...",
-            key="chat_input_textarea"
+def queue_user_message(text: str):
+    if not text or not text.strip() or st.session_state.is_processing:
+        return
+    st.session_state.chat_history.append({"role": "user", "content": text.strip()})
+    st.session_state.is_processing = True
+
+
+def append_contact_card():
+    lang = session_to_ui_lang(st.session_state.current_language)
+    t = COPY[lang]
+    st.session_state.chat_history.append(
+        {
+            "role": "assistant",
+            "content": t["contactIntro"],
+            "kind": "contact",
+            "contact_submitted": False,
+        }
+    )
+
+
+def reset_conversation():
+    st.session_state.chat_history = []
+    st.session_state.is_processing = False
+    st.session_state.last_error = None
+
+
+def process_openai_response(openai_api_key: str, user_input: str):
+    lang = session_to_ui_lang(st.session_state.current_language)
+    t = COPY[lang]
+    language = st.session_state.current_language
+    switch = detect_language_switch(user_input)
+    if switch == "english":
+        language = "english"
+        st.session_state.current_language = "english"
+        notify(t["langSwitchEn"])
+    elif switch == "french":
+        language = "french"
+        st.session_state.current_language = "french"
+        notify(t["langSwitchFr"])
+
+    client = openai.OpenAI(api_key=openai_api_key)
+    messages = [
+        {"role": "system", "content": create_system_prompt(language, client)},
+        *build_api_messages(st.session_state.chat_history),
+    ]
+    done = False
+    max_iterations = 5
+    iteration = 0
+    assistant_response = None
+    st.session_state.last_error = None
+
+    while not done and iteration < max_iterations:
+        iteration += 1
+        response = create_chat_completion(client, messages, tools=tools, temperature=0.7)
+        finish_reason = response.choices[0].finish_reason
+        if finish_reason == "tool_calls":
+            message = response.choices[0].message
+            tool_results = handle_tool_calls(message.tool_calls)
+            messages.append(assistant_message_to_dict(message))
+            messages.extend(tool_results)
+            continue
+        assistant_response = response.choices[0].message.content
+        done = True
+
+    if iteration >= max_iterations:
+        st.session_state.last_error = "Conversation interrompue après trop d'itérations."
+
+    if assistant_response:
+        msg: Dict[str, Any] = {"role": "assistant", "content": assistant_response, "kind": "text"}
+        if is_projects_query(user_input):
+            msg["show_projects"] = True
+        st.session_state.chat_history.append(msg)
+    elif not st.session_state.last_error:
+        fallback = (
+            "Désolée, je n'ai pas pu répondre pour le moment. Réessayez dans un instant."
+            if language == "french"
+            else "Sorry, I couldn't reply just now. Please try again in a moment."
         )
-        
-        col1, col2, col3 = st.columns([3, 1, 1])
-        with col1:
-            submitted = st.form_submit_button(
-                "💬 Envoyer le message" if not st.session_state.is_processing else "⏳ en cours de traitement...",
-                use_container_width=True,
-                disabled=st.session_state.is_processing
-            )
-        with col2:
-            clear_chat = st.form_submit_button("🗑️ Effacer", use_container_width=True)
-        with col3:
-            # Bouton de test désactivé temporairement
-            # if st.form_submit_button("📱 Test", use_container_width=True):
-            #     if secrets_loaded:
-            #         send_pushover_notification("🧪 Test depuis le chat", pushover_user, pushover_token)
-            pass
-        
-        if clear_chat:
-            st.session_state.chat_history = []
-            st.session_state.contact_count = 0
-            st.session_state.notification_count = 0
-            st.rerun()
-        
-        if submitted and user_input:
-            # Marquer comme en cours de traitement
-            st.session_state.is_processing = True
-            
-            # Ajouter le message utilisateur
-            st.session_state.chat_history.append({"role": "user", "content": user_input})
-            
-            # Recharger immédiatement pour désactiver le bouton
-            st.rerun()
-            
-        # Traitement de la réponse de l'IA si on est en cours de traitement
-        if st.session_state.is_processing and len(st.session_state.chat_history) > 0 and st.session_state.chat_history[-1]["role"] == "user":
-            with st.spinner("Jessica réfléchit..."):
-                try:
-                    # Détecter si l'utilisateur demande à Jessica de parler en anglais
-                    language = st.session_state.current_language  # Utiliser la langue de la session
-                    english_keywords = [
-                        "english", "anglais", "speak english", "parle anglais", "réponds en anglais",
-                        "can you speak english", "peux-tu parler anglais", "in english", "en anglais",
-                        "switch to english", "passe en anglais", "change language", "change de langue"
-                    ]
-                    french_keywords = [
-                        "french", "français", "speak french", "parle français", "réponds en français",
-                        "can you speak french", "peux-tu parler français", "en français", "switch to french"
-                    ]
-                    
-                    # Détecter le changement de langue
-                    if any(keyword in user_input.lower() for keyword in english_keywords):
-                        language = "english"
-                        st.session_state.current_language = "english"
-                        st.info("🇬🇧 Jessica will now respond in English!")
-                    elif any(keyword in user_input.lower() for keyword in french_keywords):
-                        language = "french"
-                        st.session_state.current_language = "french"
-                        st.info("🇫🇷 Jessica répondra maintenant en français!")
-                    
-                    # Créer le client OpenAI d'abord
-                    client = openai.OpenAI(api_key=openai_api_key)
-                    
-                    # Préparer les messages pour OpenAI
-                    messages = [
-                        {"role": "system", "content": create_system_prompt(language, client)}
-                    ] + st.session_state.chat_history
-                    
-                    # Interaction avec OpenAI et gestion des tools
-                    done = False
-                    max_iterations = 5  # Éviter les boucles infinies
-                    iteration = 0
-                    
-                    while not done and iteration < max_iterations:
-                        iteration += 1
-                        
-                        response = client.chat.completions.create(
-                            model="gpt-4o-mini",
-                            messages=messages,
-                            tools=tools,
-                            temperature=0.7
-                        )
-                        
-                        finish_reason = response.choices[0].finish_reason
-                        
-                        if finish_reason == "tool_calls":
-                            # L'IA veut utiliser des outils
-                            message = response.choices[0].message
-                            tool_calls = message.tool_calls
-                            
-                            # Traiter les appels d'outils
-                            tool_results = handle_tool_calls(tool_calls)
-                            
-                            # Ajouter les messages d'outils à l'historique OpenAI
-                            messages.append(message)
-                            messages.extend(tool_results)
-                            
-                            # Ne pas ajouter les résultats des outils à l'historique visible
-                            # car ils ne sont pas des messages de conversation normaux
-                            # st.session_state.chat_history.append(result)  # Ligne supprimée
-                            
-                            # Continuer la conversation après l'exécution des outils
-                            # L'IA peut maintenant répondre à la question originale
-                            continue
+        st.session_state.chat_history.append({"role": "assistant", "content": fallback, "kind": "text"})
+
+    if is_contact_query(user_input):
+        has_open_contact = any(
+            m.get("kind") == "contact" and not m.get("contact_submitted")
+            for m in st.session_state.chat_history
+        )
+        if not has_open_contact:
+            append_contact_card()
+
+
+def render_header(t: dict, has_chat: bool):
+    """Header on two rows — Streamlit columns cannot nest."""
+    row1 = st.columns([1.7, 1.05, 1.15])
+    with row1[0]:
+        st.markdown(render_header_profile(t["name"], t["status"]), unsafe_allow_html=True)
+    with row1[1]:
+        if st.button(f"✉ {t['contactBtn']}", key="btn_contact", type="primary"):
+            append_contact_card()
+            rerun()
+    with row1[2]:
+        if has_chat and st.button(f"↻ {t['reset']}", key="btn_reset"):
+            reset_conversation()
+            rerun()
+
+    row2 = st.columns([1.4, 0.95, 0.95, 1.15, 0.62, 0.62])
+    with row2[0]:
+        pass
+    for col, theme_key in zip(row2[1:4], ["clair", "sombre", "editorial"]):
+        with col:
+            if st.button(
+                THEME_LABELS[theme_key],
+                key=f"theme_{theme_key}",
+                type="primary" if st.session_state.theme == theme_key else "secondary",
+            ):
+                st.session_state.theme = theme_key
+                rerun()
+    with row2[4]:
+        if st.button(
+            "FR",
+            key="lang_fr",
+            type="primary" if st.session_state.current_language == "french" else "secondary",
+        ):
+            st.session_state.current_language = "french"
+            rerun()
+    with row2[5]:
+        if st.button(
+            "EN",
+            key="lang_en",
+            type="primary" if st.session_state.current_language == "english" else "secondary",
+        ):
+            st.session_state.current_language = "english"
+            rerun()
+
+
+def render_chat_messages(t: dict):
+    for idx, message in enumerate(st.session_state.chat_history):
+        role = message.get("role")
+        if role == "user":
+            st.markdown(render_user_bubble(message["content"]), unsafe_allow_html=True)
+            continue
+
+        if role != "assistant":
+            continue
+
+        kind = message.get("kind", "text")
+        if kind == "contact":
+            st.markdown(render_contact_intro(message["content"]), unsafe_allow_html=True)
+            if message.get("contact_submitted"):
+                email = message.get("contact_email", "")
+                done_msg = f"{t['contactDonePrefix']}{email}."
+                st.markdown(render_contact_success(t["contactDoneTitle"], done_msg), unsafe_allow_html=True)
+            else:
+                with st.form(key=f"contact_form_{idx}"):
+                    st.markdown(f"**{t['contactFormTitle']}**")
+                    name = st.text_input(t["fName"], key=f"c_name_{idx}")
+                    email = st.text_input(t["fEmail"], key=f"c_email_{idx}")
+                    phone = st.text_input(t["fPhone"], key=f"c_phone_{idx}")
+                    notes = st.text_area(t["fMsg"], key=f"c_msg_{idx}", height=68)
+                    submitted = st.form_submit_button(t["fSubmit"], use_container_width=True)
+                    if submitted:
+                        if not EMAIL_RE.match((email or "").strip()):
+                            st.error(t["contactErrorEmail"])
                         else:
-                            # Réponse finale
-                            assistant_response = response.choices[0].message.content
-                            if assistant_response:
-                                st.session_state.chat_history.append({"role": "assistant", "content": assistant_response})
-                            done = True
-                    
-                    if iteration >= max_iterations:
-                        st.warning("⚠️ Conversation interrompue après trop d'itérations")
-                    
-                    # Réinitialiser l'état de traitement
-                    st.session_state.is_processing = False
-                    
-                    # Recharger la page pour afficher les nouveaux messages
-                    st.rerun()
-                    
-                except openai.OpenAIError as e:
-                    st.error(f"Erreur OpenAI : {str(e)}")
-                except Exception as e:
-                    st.error(f"Erreur lors de la conversation : {str(e)}")
-                    # En cas d'erreur, on peut quand même garder le message utilisateur
-                    st.info("💬 Votre message a été enregistré malgré l'erreur")
-                    # Réinitialiser l'état de traitement en cas d'erreur
-                    st.session_state.is_processing = False
+                            record_user_details(
+                                email=email.strip(),
+                                name=name.strip() or "Nom non fourni",
+                                phone=phone.strip() or "Non fourni",
+                                notes=notes.strip() or "Aucune note",
+                                show_ui=False,
+                            )
+                            st.session_state.chat_history[idx]["contact_submitted"] = True
+                            st.session_state.chat_history[idx]["contact_email"] = email.strip()
+                            st.session_state.chat_history.append(
+                                {"role": "assistant", "content": t["contactThanks"], "kind": "text"}
+                            )
+                            rerun()
+            continue
 
-# Footer
-st.markdown("---")
-contact_linkedin = st.secrets.get("CONTACT_LINKEDIN", "https://www.linkedin.com/in/jessicakuijer/")
-portfolio_url = st.secrets.get("PORTFOLIO_URL", "https://jessicakuijer.com")
+        if kind == "projects":
+            st.markdown(render_assistant_projects(message["content"], t["projects"]), unsafe_allow_html=True)
+        elif message.get("show_projects"):
+            st.markdown(render_assistant_with_projects(message["content"], t["projects"]), unsafe_allow_html=True)
+        else:
+            st.markdown(render_assistant_bubble(message["content"]), unsafe_allow_html=True)
 
-st.markdown(f"""
-<div style='text-align: center; color: #666; padding: 1rem;'>
-    <p>🤖 <strong>Jessica Kuijer - Assistant IA</strong> - Propulsé par OpenAI & Pushover</p>
-    <p>💡 Votre représentante virtuelle intelligente avec notifications temps réel</p>
-    <p>📧 Contact direct : <a href="{contact_linkedin}">{contact_linkedin}</a> | 🌐 Portfolio : <a href="{portfolio_url}" target="_blank">jessicakuijer.com</a></p>
-    <p><small>Version 2.0 - Dernière mise à jour: {time.strftime('%d/%m/%Y')}</small></p>
-</div>
-""", unsafe_allow_html=True)
+
+def render_composer(t: dict) -> Optional[str]:
+    """Message input compatible with Streamlit versions without st.chat_input."""
+    disabled = st.session_state.is_processing
+    with st.form("jk_composer", clear_on_submit=True):
+        col_input, col_send = st.columns([11, 1])
+        with col_input:
+            user_text = st.text_input(
+                "message",
+                placeholder=t["placeholder"],
+                label_visibility="collapsed",
+                disabled=disabled,
+            )
+        with col_send:
+            submitted = st.form_submit_button("↑", use_container_width=True, disabled=disabled)
+    if submitted and user_text and user_text.strip():
+        return user_text.strip()
+    return None
+
+
+def render_welcome_prompts(t: dict):
+    st.markdown(
+        render_welcome(t["greetingLine1"], t["greetingSub"], t["promptsTitle"]),
+        unsafe_allow_html=True,
+    )
+    cols = st.columns(2)
+    for i, prompt in enumerate(t["prompts"]):
+        with cols[i % 2]:
+            if st.button(f"{prompt}  ↗", key=f"prompt_{i}", use_container_width=True):
+                queue_user_message(prompt)
+                rerun()
+
+
+# --- App bootstrap ---
+apply_styles(st.session_state.theme)
+
+try:
+    openai_api_key = st.secrets["OPENAI_API_KEY"]
+    pushover_user = st.secrets["PUSHOVER_USER"]
+    pushover_token = st.secrets["PUSHOVER_TOKEN"]
+    st.session_state.pushover_user = pushover_user
+    st.session_state.pushover_token = pushover_token
+    secrets_loaded = True
+except KeyError:
+    openai_api_key = ""
+    secrets_loaded = False
+
+ui_lang = session_to_ui_lang(st.session_state.current_language)
+t = COPY[ui_lang]
+has_chat = len(st.session_state.chat_history) > 0
+
+# Header
+render_header(t, has_chat)
+
+if not secrets_loaded:
+    st.markdown(
+        render_config_error(t["configErrorTitle"], t["configErrorBody"], t["configErrorSecrets"], t["configErrorContact"]),
+        unsafe_allow_html=True,
+    )
+else:
+    if st.session_state.last_error:
+        st.error(st.session_state.last_error)
+
+    if not has_chat and not st.session_state.is_processing:
+        render_welcome_prompts(t)
+    else:
+        render_chat_messages(t)
+        if st.session_state.is_processing:
+            st.markdown(render_typing_indicator(), unsafe_allow_html=True)
+
+    if (
+        st.session_state.is_processing
+        and st.session_state.chat_history
+        and st.session_state.chat_history[-1]["role"] == "user"
+    ):
+        user_input = st.session_state.chat_history[-1]["content"]
+        try:
+            process_openai_response(openai_api_key, user_input)
+        except openai.OpenAIError as e:
+            st.session_state.last_error = f"Erreur OpenAI : {str(e)}"
+        except Exception as e:
+            st.session_state.last_error = f"Erreur lors de la conversation : {str(e)}"
+        finally:
+            st.session_state.is_processing = False
+            rerun()
+
+if secrets_loaded:
+    chat_input = render_composer(t)
+    st.markdown(f'<div class="jk-disclaimer">{t["disclaimer"]}</div>', unsafe_allow_html=True)
+    contact_linkedin = st.secrets.get("CONTACT_LINKEDIN", "https://www.linkedin.com/in/jessicakuijer/")
+    portfolio_url = st.secrets.get("PORTFOLIO_URL", "https://jessicakuijer.com")
+    st.markdown(render_footer_links(contact_linkedin, portfolio_url), unsafe_allow_html=True)
+
+    if chat_input:
+        queue_user_message(chat_input)
+        rerun()

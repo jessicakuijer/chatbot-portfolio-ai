@@ -40,7 +40,7 @@ Cet assistant IA me représente sur mon site web personnel et discute de ma carr
 ## 🛠️ Technologies Utilisées
 
 - **[Streamlit](https://streamlit.io)** - Interface web interactive
-- **[OpenAI GPT-4o-mini](https://openai.com)** - Intelligence artificielle conversationnelle
+- **[OpenAI GPT-5 mini](https://openai.com)** - Intelligence artificielle conversationnelle
 - **[Pushover](https://pushover.net)** - Notifications mobile temps réel
 - **[PyPDF](https://pypdf.readthedocs.io/)** - Traitement des documents LinkedIn
 - **Python 3.8+** - Langage de programmation
@@ -73,6 +73,8 @@ L'assistant capture automatiquement :
 ```bash
 git clone https://github.com/votre-username/jessica-ai-assistant
 cd jessica-ai-assistant
+python3 -m venv .venv
+source .venv/bin/activate   # Windows : .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -97,6 +99,14 @@ textColor = "#000000"  # Texte noir
 ```
 
 ### 4. Lancement
+Utilisez **le Streamlit du virtualenv** (pas la commande système) :
+
+```bash
+.venv/bin/streamlit run app.py
+```
+
+Ou, avec le venv activé :
+
 ```bash
 streamlit run app.py
 ```
@@ -112,11 +122,11 @@ L'assistant détecte automatiquement quand l'utilisateur demande à Jessica de p
 
 ## 🎨 Interface et Thème
 
-### Thème Clair Forcé
-- **Mode clair par défaut** pour une lisibilité optimale sur tous les appareils
-- **CSS personnalisé** avec couleurs forcées pour éviter les problèmes de contraste
-- **Configuration Streamlit** via `.streamlit/config.toml` pour maintenir le thème
-- **Amélioration de l'accessibilité** avec des couleurs de texte contrastées
+### Design system full-page
+- **Layout chat** inspiré du prototype : header compact, écran d'accueil avec prompts, bulles de conversation, composer en bas
+- **3 thèmes** au choix : Clair, Sombre, Éditorial (variables CSS + polices Hanken Grotesk / Instrument Serif)
+- **Composants riches** : cartes projets 2×2, formulaire de contact inline, indicateur de frappe
+- **Configuration Streamlit** via `.streamlit/config.toml` (`primaryColor = #4f46e5`)
 - **Compatibilité multi-appareils** (mobile, tablette, desktop)
 
 ### Traduction Dynamique du Profil
