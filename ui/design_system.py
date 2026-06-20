@@ -144,6 +144,13 @@ footer {{ visibility: hidden; height: 0 !important; }}
   padding-bottom: 0.75rem !important;
   max-width: 960px !important;
 }}
+div.jk-prompts-grid {{
+  display: none !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}}
 /* Legacy empty layout hooks — must not reserve space */
 div.jk-shell,
 div.jk-main,
@@ -564,8 +571,151 @@ div.jk-prompts {{
 }}
 
 @media (max-width: 640px) {{
+  .stApp .main .block-container {{
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    max-width: 100% !important;
+  }}
+
+  /* Navbar — row 1: profile full width, actions side by side */
+  .main .block-container div[data-testid="stHorizontalBlock"]:first-of-type,
+  .main .block-container div.row-widget.stHorizontal:first-of-type {{
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 120 !important;
+    background: var(--surface) !important;
+    border-bottom: 1px solid var(--border) !important;
+    margin-left: -14px !important;
+    margin-right: -14px !important;
+    padding: 10px 14px 8px !important;
+  }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:first-child,
+  .main .block-container div.row-widget.stHorizontal:first-of-type > div[data-testid="column"]:first-child {{
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(2),
+  .main .block-container div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(3),
+  .main .block-container div.row-widget.stHorizontal:first-of-type > div[data-testid="column"]:nth-child(2),
+  .main .block-container div.row-widget.stHorizontal:first-of-type > div[data-testid="column"]:nth-child(3) {{
+    flex: 1 1 calc(50% - 4px) !important;
+    width: calc(50% - 4px) !important;
+    max-width: calc(50% - 4px) !important;
+    min-width: 0 !important;
+  }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(3):not(:has(.stButton)),
+  .main .block-container div.row-widget.stHorizontal:first-of-type > div[data-testid="column"]:nth-child(3):not(:has(.stButton)) {{
+    display: none !important;
+  }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:first-of-type > div[data-testid="column"]:nth-child(2):last-child,
+  .main .block-container div.row-widget.stHorizontal:first-of-type > div[data-testid="column"]:nth-child(2):last-child {{
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }}
+
+  /* Navbar — row 2: hide spacer, center theme + language pills */
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2),
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) {{
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 8px !important;
+    position: sticky !important;
+    top: 92px !important;
+    z-index: 110 !important;
+    background: var(--surface) !important;
+    border-bottom: 1px solid var(--border) !important;
+    margin-left: -14px !important;
+    margin-right: -14px !important;
+    padding: 8px 14px 10px !important;
+  }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:first-child,
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:first-child {{
+    display: none !important;
+  }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"],
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"] {{
+    flex: 0 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:nth-child(2),
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:nth-child(3),
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:nth-child(4),
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:nth-child(2),
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:nth-child(3),
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:nth-child(4) {{
+    background: var(--surface-2) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 999px !important;
+    padding: 2px 3px !important;
+  }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:nth-child(5),
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:nth-child(6),
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:nth-child(5),
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:nth-child(6) {{
+    background: var(--surface-2) !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 999px !important;
+    padding: 2px 3px !important;
+  }}
+
+  /* Compact profile + header buttons */
+  .jk-profile {{ gap: 10px; }}
+  .jk-profile-status {{ display: none; }}
+  .jk-profile-name {{ font-size: 14px; }}
+  .jk-avatar {{ width: 36px; height: 36px; font-size: 13px; }}
+  .jk-online {{ width: 10px; height: 10px; }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:first-of-type .stButton > button,
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) .stButton > button,
+  .main .block-container div.row-widget.stHorizontal:first-of-type .stButton > button,
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) .stButton > button {{
+    font-size: 12px !important;
+    padding: 7px 12px !important;
+    min-height: 34px !important;
+    width: 100% !important;
+  }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:nth-child(2) .stButton > button,
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:nth-child(3) .stButton > button,
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:nth-child(4) .stButton > button,
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:nth-child(2) .stButton > button,
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:nth-child(3) .stButton > button,
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:nth-child(4) .stButton > button {{
+    padding: 5px 10px !important;
+    min-height: 30px !important;
+  }}
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:nth-child(5) .stButton > button,
+  .main .block-container div[data-testid="stHorizontalBlock"]:nth-of-type(2) > div[data-testid="column"]:nth-child(6) .stButton > button,
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:nth-child(5) .stButton > button,
+  .main .block-container div.row-widget.stHorizontal:nth-of-type(2) > div[data-testid="column"]:nth-child(6) .stButton > button {{
+    padding: 5px 12px !important;
+    min-width: 38px !important;
+    min-height: 30px !important;
+  }}
+
   .jk-projects-grid {{ grid-template-columns: 1fr; }}
   .jk-bubble {{ max-width: 92%; }}
+  .jk-welcome {{ padding: 18px 0 12px; }}
+  .jk-welcome-sub {{ font-size: 15px; margin-bottom: 24px; }}
+
+  /* Welcome prompts — stack only the grid below the anchor marker */
+  .element-container:has(.jk-prompts-grid) + .element-container [data-testid="stHorizontalBlock"],
+  .element-container:has(.jk-prompts-grid) + .element-container div.row-widget.stHorizontal {{
+    flex-direction: column !important;
+  }}
+  .element-container:has(.jk-prompts-grid) + .element-container [data-testid="column"] {{
+    flex: 1 1 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }}
 }}
 """
 

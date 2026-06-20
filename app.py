@@ -612,19 +612,19 @@ def process_openai_response(openai_api_key: str, user_input: str):
 
 def render_header(t: dict, has_chat: bool):
     """Header on two rows — Streamlit columns cannot nest."""
-    row1 = st.columns([1.7, 1.05, 1.15])
+    row1 = st.columns([1.55, 1, 1], gap="small")
     with row1[0]:
         st.markdown(render_header_profile(t["name"], t["status"]), unsafe_allow_html=True)
     with row1[1]:
-        if st.button(f"✉ {t['contactBtn']}", key="btn_contact", type="primary"):
+        if st.button(f"✉ {t['contactBtn']}", key="btn_contact", type="primary", use_container_width=True):
             append_contact_card()
             rerun()
     with row1[2]:
-        if has_chat and st.button(f"↻ {t['reset']}", key="btn_reset"):
+        if has_chat and st.button(f"↻ {t['reset']}", key="btn_reset", use_container_width=True):
             reset_conversation()
             rerun()
 
-    row2 = st.columns([1.4, 0.95, 0.95, 1.15, 0.62, 0.62])
+    row2 = st.columns([1.35, 0.9, 0.9, 1.05, 0.55, 0.55], gap="small")
     with row2[0]:
         pass
     for col, theme_key in zip(row2[1:4], ["clair", "sombre", "editorial"]):
@@ -633,6 +633,7 @@ def render_header(t: dict, has_chat: bool):
                 THEME_LABELS[theme_key],
                 key=f"theme_{theme_key}",
                 type="primary" if st.session_state.theme == theme_key else "secondary",
+                use_container_width=True,
             ):
                 st.session_state.theme = theme_key
                 rerun()
@@ -641,6 +642,7 @@ def render_header(t: dict, has_chat: bool):
             "FR",
             key="lang_fr",
             type="primary" if st.session_state.current_language == "french" else "secondary",
+            use_container_width=True,
         ):
             st.session_state.current_language = "french"
             rerun()
@@ -649,6 +651,7 @@ def render_header(t: dict, has_chat: bool):
             "EN",
             key="lang_en",
             type="primary" if st.session_state.current_language == "english" else "secondary",
+            use_container_width=True,
         ):
             st.session_state.current_language = "english"
             rerun()
@@ -730,7 +733,8 @@ def render_welcome_prompts(t: dict):
         render_welcome(t["greetingLine1"], t["greetingSub"], t["promptsTitle"]),
         unsafe_allow_html=True,
     )
-    cols = st.columns(2)
+    st.markdown('<div class="jk-prompts-grid"></div>', unsafe_allow_html=True)
+    cols = st.columns(2, gap="small")
     for i, prompt in enumerate(t["prompts"]):
         with cols[i % 2]:
             if st.button(f"{prompt}  ↗", key=f"prompt_{i}", use_container_width=True):
